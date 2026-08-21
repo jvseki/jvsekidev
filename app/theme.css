@@ -1,0 +1,45 @@
+/*
+  ÚNICA fonte de verdade dos tokens visuais da JVSEKI.
+  Preto + cromo. Sem roxo, sem azul, sem gradiente colorido —
+  o roxo pertence à Seklyn, não à JVSEKI.
+
+  Regra dura: o gradiente cromado (--chrome) só é usado no logo,
+  nos numerais de seção e no traço do CTA principal. Em qualquer
+  outro lugar ele vira "papel alumínio" — não usar por conta própria.
+*/
+
+:root {
+  /* Superfícies */
+  --bg-void: #050506;
+  --bg-panel: #0d0d10;
+  --stroke: #1c1c21;
+
+  /* Texto */
+  --text: #f5f5f7;
+  --text-mute: #8a8a93;
+
+  /* Cromo — reflexo especular, não cor */
+  --chrome: linear-gradient(
+    135deg,
+    #fff 0%,
+    #c7cbd4 18%,
+    #6e7480 38%,
+    #edeff3 52%,
+    #9aa0ac 70%,
+    #fff 100%
+  );
+
+  /* Geometria */
+  --radius-max: 8px;
+  --container-max: 1200px;
+  --hairline: 1px solid var(--stroke);
+
+  /* Ritmo vertical generoso */
+  --space-section: clamp(5rem, 10vw, 8rem);
+  --space-section-sm: clamp(3rem, 6vw, 4.5rem);
+
+  /* Movimento (usado a partir da etapa 3) */
+  --ease-standard: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-fast: 0.2s;
+  --duration-standard: 0.4s;
+}

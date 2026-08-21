@@ -1,0 +1,137 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import "./theme.css";
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    background: var(--bg-void);
+    color-scheme: dark;
+  }
+
+  body {
+    background: var(--bg-void);
+    color: var(--text);
+    font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  img {
+    max-width: 100%;
+    display: block;
+  }
+
+  a {
+    color: inherit;
+  }
+
+  ::selection {
+    background: var(--text);
+    color: var(--bg-void);
+  }
+
+  :focus-visible {
+    outline: 1px solid var(--text);
+    outline-offset: 3px;
+  }
+}
+
+@layer components {
+  /* Display type: peso variável 600–700, tracking apertado. */
+  .type-display {
+    font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+    font-weight: 650;
+    letter-spacing: -0.03em;
+  }
+
+  /* Cromo em texto — só para logo, numerais e o traço do CTA. */
+  .chrome-text {
+    background-image: var(--chrome);
+    background-size: 200% 200%;
+    background-position: 30% 50%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .chrome-stroke {
+    background-image: var(--chrome);
+  }
+
+  .hairline {
+    border: var(--hairline);
+  }
+
+  /* Botões */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 48px;
+    padding: 0.7rem 1.4rem;
+    border-radius: var(--radius-max);
+    font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    transition: transform var(--duration-fast) var(--ease-standard),
+      border-color var(--duration-fast) var(--ease-standard),
+      background var(--duration-fast) var(--ease-standard);
+  }
+
+  /* Cromo aparece no traço, nunca preenchendo o botão. */
+  .btn-chrome {
+    color: var(--text);
+    background-image: linear-gradient(var(--bg-void), var(--bg-void)), var(--chrome);
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    border: 1px solid transparent;
+  }
+
+  .btn-chrome:hover {
+    background-image: linear-gradient(var(--bg-panel), var(--bg-panel)), var(--chrome);
+  }
+
+  .btn-ghost {
+    color: var(--text-mute);
+    border: var(--hairline);
+    background: transparent;
+  }
+
+  .btn-ghost:hover {
+    color: var(--text);
+    border-color: var(--text-mute);
+  }
+
+  .wrap {
+    width: min(100% - 3rem, var(--container-max));
+    margin-inline: auto;
+  }
+
+  @media (max-width: 640px) {
+    .wrap {
+      width: min(100% - 2rem, var(--container-max));
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
