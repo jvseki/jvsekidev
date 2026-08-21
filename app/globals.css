@@ -70,6 +70,47 @@
     border: var(--hairline);
   }
 
+  .eyebrow {
+    font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-mute);
+  }
+
+  /* Numeral cromado — só isto, os títulos de card e o CTA usam cromo. */
+  .numeral-chrome {
+    font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+    font-weight: 650;
+    font-size: clamp(1.5rem, 3vw, 1.9rem);
+    letter-spacing: -0.03em;
+    line-height: 1;
+    background-image: var(--chrome);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.6rem;
+    border-radius: var(--radius-max);
+    border: var(--hairline);
+    color: var(--text-mute);
+  }
+
+  .panel {
+    background: var(--bg-panel);
+    border: var(--hairline);
+    border-radius: var(--radius-max);
+  }
+
   /* Botões */
   .btn {
     display: inline-flex;

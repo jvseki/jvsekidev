@@ -1,5 +1,10 @@
 import Image from "next/image";
+import Link from "next/link";
 import { Button } from "@/components/Button";
+import { CapabilityCard } from "@/components/CapabilityCard";
+import { StepCard } from "@/components/StepCard";
+import { SectionHeading } from "@/components/SectionHeading";
+import { capabilities, howWeWork, timelines } from "@/lib/content";
 import { waLink, waMessages } from "@/lib/site";
 
 export default function HomePage() {
@@ -42,6 +47,71 @@ export default function HomePage() {
               priority
               className="h-auto w-[68vw] max-w-[420px] rounded-md object-contain md:w-full"
             />
+          </div>
+        </div>
+      </section>
+
+      {/* 02 · O QUE EU CONSTRUO */}
+      <section className="border-t border-stroke py-[var(--space-section)]">
+        <div className="wrap">
+          <SectionHeading
+            eyebrow="O que eu construo"
+            title="Cinco frentes, um mesmo padrão: funcional do primeiro dia."
+          />
+          <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {capabilities.map((c) => (
+              <CapabilityCard key={c.n} {...c} />
+            ))}
+          </div>
+
+          <div className="mt-10">
+            <Link
+              href="/projetos"
+              className="inline-flex items-center gap-1.5 text-sm font-semibold text-ink underline decoration-stroke underline-offset-4 transition-colors hover:decoration-ink"
+            >
+              Ver os projetos que já estão no ar →
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* 04 · COMO TRABALHO */}
+      <section className="border-t border-stroke py-[var(--space-section)]">
+        <div className="wrap">
+          <SectionHeading eyebrow="Como trabalho" title="Do primeiro contato à manutenção contínua." />
+
+          <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {howWeWork.map((step) => (
+              <StepCard key={step.n} {...step} />
+            ))}
+          </div>
+
+          <div className="panel mt-10 flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
+            <p className="eyebrow">Prazo médio</p>
+            <div className="flex flex-wrap gap-x-8 gap-y-2">
+              {timelines.map((t) => (
+                <p key={t.label} className="text-[0.95rem] text-mute">
+                  <span className="text-ink">{t.value}</span> · {t.label}
+                </p>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA final */}
+      <section className="border-t border-stroke py-16">
+        <div className="wrap flex flex-col items-start gap-5 sm:flex-row sm:items-center sm:justify-between">
+          <h2 className="type-display max-w-[24ch] text-[clamp(1.4rem,3vw,1.9rem)]">
+            Tem um sistema em mente? Vamos conversar sobre ele.
+          </h2>
+          <div className="flex flex-wrap gap-3">
+            <Button variant="chrome" href={waLink(waMessages.hero)} target="_blank" rel="noopener noreferrer">
+              Falar no WhatsApp
+            </Button>
+            <Button variant="ghost" href="/projetos">
+              Ver projetos
+            </Button>
           </div>
         </div>
       </section>
