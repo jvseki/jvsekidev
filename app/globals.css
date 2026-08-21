@@ -111,6 +111,63 @@
     border-radius: var(--radius-max);
   }
 
+  /* Tilt + glare — etapa 3. rotateX/Y setados via JS em --tilt-x/--tilt-y,
+     ponto do brilho em --glare-x/--glare-y, força em --glare-o (0 ou 1). */
+  .tilt {
+    position: relative;
+    overflow: hidden;
+    transform: perspective(900px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+    transition: transform var(--duration-fast) var(--ease-standard);
+    transform-style: preserve-3d;
+  }
+
+  .tilt-glare {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: calc(var(--glare-o, 0) * 0.06);
+    transition: opacity var(--duration-standard) var(--ease-standard);
+    background: radial-gradient(circle at var(--glare-x, 50%) var(--glare-y, 50%), #fff, transparent 60%);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tilt {
+      transform: none !important;
+    }
+    .tilt-glare {
+      display: none;
+    }
+  }
+
+  /* Cursor customizado — desktop only, injetado/controlado via JS. */
+  .custom-cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 22px;
+    height: 22px;
+    margin: -11px 0 0 -11px;
+    border-radius: 9999px;
+    border: 1px solid var(--text);
+    pointer-events: none;
+    z-index: 999;
+    transition: width var(--duration-fast) var(--ease-standard), height var(--duration-fast) var(--ease-standard),
+      background var(--duration-fast) var(--ease-standard), opacity var(--duration-fast) var(--ease-standard);
+    will-change: transform;
+  }
+
+  .custom-cursor[data-active="true"] {
+    width: 40px;
+    height: 40px;
+    margin: -20px 0 0 -20px;
+    background: var(--text);
+  }
+
+  .has-custom-cursor,
+  .has-custom-cursor * {
+    cursor: none !important;
+  }
+
   /* Botões */
   .btn {
     display: inline-flex;

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { CaseCard } from "@/components/CaseCard";
 import { Button } from "@/components/Button";
+import { Reveal } from "@/components/Reveal";
 import { cases, labReserva } from "@/lib/content";
 
 export const metadata: Metadata = {
@@ -24,13 +25,15 @@ export default function ProjetosPage() {
         </p>
 
         <div className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {cases.map((c) => (
-            <CaseCard key={c.n} {...c} />
+          {cases.map((c, i) => (
+            <Reveal key={c.n} delay={Math.min(i, 5) * 0.05}>
+              <CaseCard {...c} />
+            </Reveal>
           ))}
         </div>
 
         {/* Substitui o iframe embutido do Lab Reserva: link direto pra demo e pro repo. */}
-        <div className="panel mt-6 flex flex-col gap-5 p-6 md:flex-row md:items-center md:justify-between">
+        <Reveal className="panel mt-6 flex flex-col gap-5 p-6 md:flex-row md:items-center md:justify-between">
           <div className="max-w-[52ch]">
             <p className="eyebrow">Código aberto · TCC</p>
             <h2 className="type-display mt-2 text-[1.25rem]">{labReserva.name} — demo funcional</h2>
@@ -44,7 +47,7 @@ export default function ProjetosPage() {
               Ver código
             </Button>
           </div>
-        </div>
+        </Reveal>
 
         <p className="mt-8 max-w-[60ch] text-sm text-mute">
           Como eu trabalho: a produção de cada cliente fica em repositório privado. O código aberto do

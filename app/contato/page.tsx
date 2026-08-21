@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ChannelCard } from "@/components/ChannelCard";
 import { ContactForm } from "@/components/ContactForm";
+import { Reveal } from "@/components/Reveal";
 import { site, waLink, waMessages } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -21,7 +22,7 @@ export default function ContatoPage() {
           {site.serviceArea}. Descreva o que você precisa — respondo com prazo e próximos passos.
         </p>
 
-        <div className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <Reveal className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <ChannelCard
             label="WhatsApp"
             value={site.phoneDisplay}
@@ -52,15 +53,15 @@ export default function ContatoPage() {
             target="_blank"
             rel="noopener noreferrer"
           />
-        </div>
+        </Reveal>
 
-        <div className="mt-14 max-w-[720px]">
+        <Reveal className="mt-14 max-w-[720px]" delay={0.1}>
           <p className="eyebrow">Ou, se preferir</p>
           <h2 className="type-display mt-2 text-[1.25rem]">Manda os detalhes por e-mail</h2>
           <div className="mt-5">
             <ContactForm />
           </div>
-        </div>
+        </Reveal>
       </div>
     </section>
   );

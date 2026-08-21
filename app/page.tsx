@@ -4,6 +4,7 @@ import { Button } from "@/components/Button";
 import { CapabilityCard } from "@/components/CapabilityCard";
 import { StepCard } from "@/components/StepCard";
 import { SectionHeading } from "@/components/SectionHeading";
+import { Reveal } from "@/components/Reveal";
 import { capabilities, howWeWork, timelines } from "@/lib/content";
 import { waLink, waMessages } from "@/lib/site";
 
@@ -14,7 +15,7 @@ export default function HomePage() {
           entra na etapa 4 no lugar da imagem estática abaixo. */}
       <section className="relative overflow-hidden">
         <div className="wrap grid min-h-[68svh] items-center gap-8 py-14 md:min-h-[calc(100svh-72px)] md:grid-cols-2 md:gap-12 md:py-24">
-          <div className="relative z-10">
+          <Reveal className="relative z-10" transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}>
             <h1 className="type-display max-w-[16ch] text-[clamp(2.1rem,8vw,3.75rem)] leading-[1.08]">
               Sistemas sob medida, do banco ao deploy.
             </h1>
@@ -32,7 +33,7 @@ export default function HomePage() {
                 Falar sobre seu projeto →
               </Button>
             </div>
-          </div>
+          </Reveal>
 
           {/* Placeholder estático do logo — vira <Canvas> do R3F na etapa 4. */}
           <div
@@ -54,13 +55,17 @@ export default function HomePage() {
       {/* 02 · O QUE EU CONSTRUO */}
       <section className="border-t border-stroke py-[var(--space-section)]">
         <div className="wrap">
-          <SectionHeading
-            eyebrow="O que eu construo"
-            title="Cinco frentes, um mesmo padrão: funcional do primeiro dia."
-          />
+          <Reveal>
+            <SectionHeading
+              eyebrow="O que eu construo"
+              title="Cinco frentes, um mesmo padrão: funcional do primeiro dia."
+            />
+          </Reveal>
           <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {capabilities.map((c) => (
-              <CapabilityCard key={c.n} {...c} />
+            {capabilities.map((c, i) => (
+              <Reveal key={c.n} delay={Math.min(i, 3) * 0.06}>
+                <CapabilityCard {...c} />
+              </Reveal>
             ))}
           </div>
 
@@ -78,15 +83,19 @@ export default function HomePage() {
       {/* 04 · COMO TRABALHO */}
       <section className="border-t border-stroke py-[var(--space-section)]">
         <div className="wrap">
-          <SectionHeading eyebrow="Como trabalho" title="Do primeiro contato à manutenção contínua." />
+          <Reveal>
+            <SectionHeading eyebrow="Como trabalho" title="Do primeiro contato à manutenção contínua." />
+          </Reveal>
 
           <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {howWeWork.map((step) => (
-              <StepCard key={step.n} {...step} />
+            {howWeWork.map((step, i) => (
+              <Reveal key={step.n} delay={i * 0.06}>
+                <StepCard {...step} />
+              </Reveal>
             ))}
           </div>
 
-          <div className="panel mt-10 flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
+          <Reveal className="panel mt-10 flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
             <p className="eyebrow">Prazo médio</p>
             <div className="flex flex-wrap gap-x-8 gap-y-2">
               {timelines.map((t) => (
@@ -95,7 +104,7 @@ export default function HomePage() {
                 </p>
               ))}
             </div>
-          </div>
+          </Reveal>
         </div>
       </section>
 

@@ -1,8 +1,13 @@
+"use client";
+
+import { useTilt } from "@/lib/useTilt";
 import type { CaseStudy } from "@/lib/content";
 
 export function CaseCard({ n, name, kind, description, stack, href, linkLabel }: CaseStudy) {
+  const { ref, tiltHandlers } = useTilt<HTMLElement>();
+
   return (
-    <article data-tilt className="panel flex flex-col p-6">
+    <article ref={ref} data-tilt className="panel tilt flex flex-col p-6" {...tiltHandlers}>
       <p className="numeral-chrome">{n}</p>
       <p className="eyebrow mt-3">{kind}</p>
       <h3 className="type-display mt-1 text-[1.2rem]">{name}</h3>
@@ -20,10 +25,11 @@ export function CaseCard({ n, name, kind, description, stack, href, linkLabel }:
         href={href}
         target="_blank"
         rel="noopener noreferrer"
-        className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-ink underline decoration-stroke underline-offset-4 transition-colors hover:decoration-ink"
+        className="relative z-10 mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-ink underline decoration-stroke underline-offset-4 transition-colors hover:decoration-ink"
       >
         {linkLabel} →
       </a>
+      <span className="tilt-glare" aria-hidden="true" />
     </article>
   );
 }

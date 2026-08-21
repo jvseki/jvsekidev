@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { Button } from "@/components/Button";
+import { Reveal } from "@/components/Reveal";
 import { skills, sobreParagraphs } from "@/lib/content";
 import { site, waLink, waMessages } from "@/lib/site";
 
@@ -14,7 +15,7 @@ export default function SobrePage() {
   return (
     <section className="py-16 md:py-20">
       <div className="wrap grid grid-cols-1 gap-10 md:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] md:gap-14">
-        <div className="relative mx-auto aspect-[4/5] w-full max-w-[320px] overflow-hidden rounded-md border border-stroke md:mx-0">
+        <Reveal className="relative mx-auto aspect-[4/5] w-full max-w-[320px] overflow-hidden rounded-md border border-stroke md:mx-0">
           <Image
             src="/brand/joao-foto.png"
             alt="João Victor, desenvolvedor JVSEKI"
@@ -23,9 +24,9 @@ export default function SobrePage() {
             className="object-cover"
             priority
           />
-        </div>
+        </Reveal>
 
-        <div>
+        <Reveal delay={0.08}>
           <p className="eyebrow">Sobre</p>
           <h1 className="type-display mt-3 text-[clamp(1.9rem,4vw,2.5rem)] leading-tight">
             João Victor Seki Mantovani
@@ -56,7 +57,7 @@ export default function SobrePage() {
               Baixar currículo (PDF)
             </Button>
           </div>
-        </div>
+        </Reveal>
       </div>
     </section>
   );
