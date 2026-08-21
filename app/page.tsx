@@ -1,5 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
+import Image from "next/image";
+import dynamic from "next/dynamic";
 import { Button } from "@/components/Button";
 import { CapabilityCard } from "@/components/CapabilityCard";
 import { StepCard } from "@/components/StepCard";
@@ -7,6 +8,24 @@ import { SectionHeading } from "@/components/SectionHeading";
 import { Reveal } from "@/components/Reveal";
 import { capabilities, howWeWork, timelines } from "@/lib/content";
 import { waLink, waMessages } from "@/lib/site";
+
+// three.js + fiber + drei são pesados demais pra ir no bundle inicial —
+// carrega só no cliente, sob demanda. Nunca roda no servidor (WebGL não
+// existe lá) e o próprio HeroScene já lida com o fallback estático
+// enquanto isto carrega.
+const HeroScene = dynamic(() => import("@/components/hero/HeroScene").then((m) => m.HeroScene), {
+  ssr: false,
+  loading: () => (
+    <Image
+      src="/brand/logo-chrome.jpg"
+      alt=""
+      width={460}
+      height={460}
+      priority
+      className="h-full w-full object-contain"
+    />
+  ),
+});
 
 export default function HomePage() {
   return (
@@ -35,19 +54,10 @@ export default function HomePage() {
             </div>
           </Reveal>
 
-          {/* Placeholder estático do logo — vira <Canvas> do R3F na etapa 4. */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center opacity-[0.22] md:static md:opacity-100"
-          >
-            <Image
-              src="/brand/logo-chrome.jpg"
-              alt=""
-              width={460}
-              height={460}
-              priority
-              className="h-auto w-[68vw] max-w-[420px] rounded-md object-contain md:w-full"
-            />
+          {/* Mobile: canvas atrás do texto (opacidade reduzida, texto legível por cima).
+              Desktop: coluna própria, em opacidade e escala plenas. */}
+          <div className="absolute inset-0 z-0 opacity-[0.22] md:static md:opacity-100">
+            <HeroScene />
           </div>
         </div>
       </section>

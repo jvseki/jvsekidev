@@ -1,0 +1,3 @@
+Drop a "j-logo.glb" file here to replace the extruded SVG fallback with a real model.
+The hero canvas checks for /models/j-logo.glb first and only falls back to the
+hand-authored SVG extrusion (public/logo/j-mark.svg) if it fails to load.
