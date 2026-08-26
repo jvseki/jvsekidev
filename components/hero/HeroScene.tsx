@@ -3,10 +3,13 @@
 import { Suspense, useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { Canvas, type RootState } from "@react-three/fiber";
 import { Environment } from "@react-three/drei";
+import { useScroll, useMotionValueEvent } from "framer-motion";
 import Image from "next/image";
 import { usePointerRig } from "@/lib/usePointerRig";
+import { useRipplePointers } from "@/lib/useRipplePointers";
 import { useInView } from "@/lib/useInView";
 import { PointerRig } from "./PointerRig";
+import { RippleBackdrop } from "./RippleBackdrop";
 
 function detectCapable(): boolean {
   if (typeof window === "undefined") return false;
@@ -34,34 +37,49 @@ export function HeroScene() {
   const [capable, setCapable] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
   const { pointerState, handlers } = usePointerRig();
+  const { points: ripplePoints, handlers: rippleHandlers } = useRipplePointers();
   const [wrapRef, inView] = useInView<HTMLDivElement>();
   const invalidateRef = useRef<(() => void) | null>(null);
+  // Escopado ao próprio hero (não a página inteira): frameloop já pausa
+  // fora da viewport, então só a rolagem que atravessa a seção importa —
+  // rastrear a página toda faria a rotação mal se mover antes do canvas
+  // sumir de vista.
+  const { scrollYProgress } = useScroll({ target: wrapRef, offset: ["start start", "end start"] });
 
   // Com frameloop="demand", nada re-renderiza sozinho: cada handler de
-  // ponteiro precisa cutucar o loop do R3F manualmente pra ele pegar a
-  // nova posição no próximo useFrame.
+  // ponteiro (e cada mudança de scroll) precisa cutucar o loop do R3F
+  // manualmente pra ele pegar o novo estado no próximo useFrame.
   const wrappedHandlers = {
     onPointerMove(e: ReactPointerEvent) {
       handlers.onPointerMove(e);
+      rippleHandlers.onPointerMove(e);
       invalidateRef.current?.();
     },
     onPointerDown(e: ReactPointerEvent) {
       handlers.onPointerDown(e);
+      rippleHandlers.onPointerDown(e);
       invalidateRef.current?.();
     },
-    onPointerUp() {
+    onPointerUp(e: ReactPointerEvent) {
       handlers.onPointerUp();
+      rippleHandlers.onPointerUp(e);
       invalidateRef.current?.();
     },
-    onPointerCancel() {
+    onPointerCancel(e: ReactPointerEvent) {
       handlers.onPointerCancel();
+      rippleHandlers.onPointerCancel(e);
       invalidateRef.current?.();
     },
-    onPointerLeave() {
+    onPointerLeave(e: ReactPointerEvent) {
       handlers.onPointerLeave();
+      rippleHandlers.onPointerLeave(e);
       invalidateRef.current?.();
     },
   };
+
+  useMotionValueEvent(scrollYProgress, "change", () => {
+    invalidateRef.current?.();
+  });
 
   useEffect(() => {
     setCapable(detectCapable());
@@ -82,6 +100,10 @@ export function HeroScene() {
           gl={{ antialias: true, alpha: true }}
           onCreated={(state: RootState) => {
             invalidateRef.current = state.invalidate;
+            // frameloop="demand" não desenha o primeiro frame sozinho —
+            // sem isto o canvas fica vazio (limpo, alpha 0) até o
+            // primeiro pointermove.
+            state.invalidate();
           }}
         >
           <ambientLight intensity={0.5} />
@@ -98,9 +120,10 @@ export function HeroScene() {
           <pointLight position={[0, 0, 10]} intensity={60} />
           <pointLight position={[-5, 3, 4]} intensity={30} color="#ffffff" />
           <pointLight position={[4, -3, 3]} intensity={20} color="#ffffff" />
+          <RippleBackdrop points={ripplePoints} reduceMotion={reduceMotion} />
           <Suspense fallback={null}>
             <Environment preset="studio" background={false} environmentIntensity={1.4} />
-            <PointerRig pointerState={pointerState} reduceMotion={reduceMotion} />
+            <PointerRig pointerState={pointerState} reduceMotion={reduceMotion} scrollYProgress={scrollYProgress} />
           </Suspense>
         </Canvas>
       ) : (

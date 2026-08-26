@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import type { Group, PointLight } from "three";
 import { MathUtils } from "three";
+import type { MotionValue } from "framer-motion";
 import type { PointerRigState } from "@/lib/usePointerRig";
 import { JMark } from "./JMark";
 
@@ -20,19 +21,24 @@ const EPSILON = 0.0005;
 const REST_Y_DEG = 22;
 const REST_X_DEG = 6;
 
+// Giro extra ao longo de toda a rolagem da página — garante que o J
+// tenha vida no mobile mesmo sem ninguém tocar nele (spec item 4).
+const SCROLL_ROTATION_DEG = 50;
+
 type PointerRigProps = {
   pointerState: React.MutableRefObject<PointerRigState>;
   reduceMotion: boolean;
+  scrollYProgress: MotionValue<number>;
 };
 
 /**
- * Gira o J conforme o ponteiro (parallax) e desloca uma pointLight junto
- * — é essa luz seguindo o dedo/mouse que faz o reflexo escorrer pelo
- * cromo. frameloop="demand" no Canvas pai: só continua invalidando (e
- * portanto renderizando) enquanto rotação/luz ainda não convergiram no
- * alvo — parado, o loop some sozinho.
+ * Gira o J conforme o ponteiro (parallax) + o scroll da página, e desloca
+ * uma pointLight junto — é essa luz seguindo o dedo/mouse que faz o
+ * reflexo escorrer pelo cromo. frameloop="demand" no Canvas pai: só
+ * continua invalidando (e portanto renderizando) enquanto rotação/luz
+ * ainda não convergiram no alvo — parado, o loop some sozinho.
  */
-export function PointerRig({ pointerState, reduceMotion }: PointerRigProps) {
+export function PointerRig({ pointerState, reduceMotion, scrollYProgress }: PointerRigProps) {
   const group = useRef<Group>(null);
   const light = useRef<PointLight>(null);
   const invalidate = useThree((s) => s.invalidate);
@@ -47,7 +53,8 @@ export function PointerRig({ pointerState, reduceMotion }: PointerRigProps) {
     const tx = active ? nx : 0;
     const ty = active ? ny : 0;
 
-    const targetY = MathUtils.degToRad(REST_Y_DEG + tx * MAX_Y_DEG);
+    const scrollDeg = reduceMotion ? 0 : scrollYProgress.get() * SCROLL_ROTATION_DEG;
+    const targetY = MathUtils.degToRad(REST_Y_DEG + tx * MAX_Y_DEG + scrollDeg);
     const targetX = MathUtils.degToRad(REST_X_DEG - ty * MAX_X_DEG);
 
     // Damping independente de frame-rate: mesmo "peso" do lerp em 30fps e 144fps.

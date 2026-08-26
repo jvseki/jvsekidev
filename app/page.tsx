@@ -56,7 +56,7 @@ export default function HomePage() {
 
           {/* Mobile: canvas atrás do texto (opacidade reduzida, texto legível por cima).
               Desktop: coluna própria, em opacidade e escala plenas. */}
-          <div className="absolute inset-0 z-0 opacity-[0.22] md:static md:opacity-100">
+          <div className="absolute inset-0 z-0 opacity-[0.22] md:static md:self-stretch md:opacity-100">
             <HeroScene />
           </div>
         </div>

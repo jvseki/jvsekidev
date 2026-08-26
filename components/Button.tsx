@@ -60,12 +60,22 @@ export function Button({ variant = "ghost", className = "", children, ...props }
 
   const base = variant === "chrome" ? "btn btn-chrome" : "btn btn-ghost";
 
+  // Haptics no tap dos CTAs primários, com feature detection — iOS Safari
+  // não implementa Vibration API, então isto simplesmente não faz nada lá.
+  function onPointerDown(e: React.PointerEvent<HTMLAnchorElement>) {
+    if (variant === "chrome" && e.pointerType === "touch" && "vibrate" in navigator) {
+      navigator.vibrate(8);
+    }
+    props.onPointerDown?.(e);
+  }
+
   return (
     <motion.a
       ref={ref}
       className={`${base} ${className}`.trim()}
       style={{ x: springX, y: springY }}
       {...props}
+      onPointerDown={onPointerDown}
     >
       {children}
     </motion.a>
