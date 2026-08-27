@@ -1,5 +1,14 @@
 {
   "version": 2,
   "cleanUrls": true,
-  "trailingSlash": false
+  "trailingSlash": false,
+  "redirects": [
+    { "source": "/index.html", "destination": "/", "permanent": true },
+    { "source": "/sobre.html", "destination": "/sobre", "permanent": true },
+    { "source": "/projetos.html", "destination": "/projetos", "permanent": true },
+    { "source": "/casos.html", "destination": "/projetos", "permanent": true },
+    { "source": "/servicos.html", "destination": "/", "permanent": true },
+    { "source": "/orcamento.html", "destination": "/contato", "permanent": true },
+    { "source": "/contato.html", "destination": "/contato", "permanent": true }
+  ]
 }

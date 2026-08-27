@@ -1,14 +1,15 @@
-import type { Metadata } from "next";
 import { CaseCard } from "@/components/CaseCard";
 import { Button } from "@/components/Button";
 import { Reveal } from "@/components/Reveal";
 import { cases, labReserva } from "@/lib/content";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Projetos",
   description:
     "Cases reais da JVSEKI: DS A Fonte, Agendamentos Augusto Mariani, Aprendizado7, Pastelaria Delivery, MTHS.PUBLI e Seklyn — sistemas em produção, do banco ao deploy.",
-};
+  path: "/projetos",
+});
 
 export default function ProjetosPage() {
   return (

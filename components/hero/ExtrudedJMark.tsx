@@ -12,8 +12,11 @@ import { buildJMarkGeometry, createChromeMaterial } from "@/lib/jMarkGeometry";
  * luz reativa varre a superfície.
  */
 export function ExtrudedJMark() {
-  const geometry = useMemo(() => buildJMarkGeometry(), []);
+  // curveSegments/bevelSegments reduzidos em relação ao padrão (24/8) —
+  // silhueta praticamente idêntica em ±18° de parallax, com menos
+  // triângulos pra compilar shader e desenhar. Geometria, não conteúdo.
+  const geometry = useMemo(() => buildJMarkGeometry({ curveSegments: 14, bevelSegments: 5 }), []);
   const chrome = useMemo(() => createChromeMaterial(), []);
 
-  return <mesh geometry={geometry} material={chrome} scale={0.024} castShadow receiveShadow />;
+  return <mesh geometry={geometry} material={chrome} scale={0.024} />;
 }

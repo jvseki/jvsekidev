@@ -2,7 +2,6 @@
 
 import { Suspense, useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { Canvas, type RootState } from "@react-three/fiber";
-import { Environment } from "@react-three/drei";
 import { useScroll, useMotionValueEvent } from "framer-motion";
 import { usePointerRig } from "@/lib/usePointerRig";
 import { useRipplePointers } from "@/lib/useRipplePointers";
@@ -81,12 +80,39 @@ export function HeroScene() {
   });
 
   useEffect(() => {
-    setCapable(detectCapable());
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     setReduceMotion(mq.matches);
     const onChange = () => setReduceMotion(mq.matches);
     mq.addEventListener("change", onChange);
-    return () => mq.removeEventListener("change", onChange);
+
+    // O <Canvas> (three.js + WebGLRenderer + primeiro render) é a maior
+    // fatia de trabalho de JS da página — medido no Lighthouse mobile,
+    // sozinho já passava de segundos de bloqueio da main thread bem no
+    // meio da janela de LCP/TTI. O vídeo/imagem de fallback já entrega
+    // um J cromado visível e legível na hora; o upgrade pro canvas
+    // interativo espera o navegador ficar ocioso (ou um teto curto), em
+    // vez de competir pelo thread principal durante o carregamento
+    // crítico. Mesmo conteúdo, só chega um instante depois.
+    const win = window as typeof window & {
+      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+      cancelIdleCallback?: (handle: number) => void;
+    };
+    let idleHandle: number | undefined;
+    let timeoutHandle: ReturnType<typeof setTimeout> | undefined;
+
+    const upgrade = () => setCapable(detectCapable());
+
+    if (typeof win.requestIdleCallback === "function") {
+      idleHandle = win.requestIdleCallback(upgrade, { timeout: 2500 });
+    } else {
+      timeoutHandle = setTimeout(upgrade, 1200);
+    }
+
+    return () => {
+      mq.removeEventListener("change", onChange);
+      if (idleHandle !== undefined) win.cancelIdleCallback?.(idleHandle);
+      if (timeoutHandle !== undefined) clearTimeout(timeoutHandle);
+    };
   }, []);
 
   return (
@@ -105,23 +131,22 @@ export function HeroScene() {
             state.invalidate();
           }}
         >
-          <ambientLight intensity={0.5} />
-          {/* Par de luzes fixas de preenchimento voltadas pra câmera — sem
-              elas, a face frontal do cromo reflete só a parte escura do
-              HDRI que fica atrás da câmera (fisicamente correto, mas lê
-              mal como logo). A pointLight reativa do PointerRig continua
-              sendo quem faz o reflexo "escorrer" com o ponteiro. */}
-          <directionalLight position={[3, 4, 6]} intensity={1.4} />
-          <directionalLight position={[-4, -2, 5]} intensity={0.6} />
-          {/* Luz junto da câmera, tipo flash de still de joia — garante
-              brilho especular na face voltada pro público independente
-              de como o HDRI do studio está orientado. */}
-          <pointLight position={[0, 0, 10]} intensity={60} />
-          <pointLight position={[-5, 3, 4]} intensity={30} color="#ffffff" />
-          <pointLight position={[4, -3, 3]} intensity={20} color="#ffffff" />
+          {/* Sem <Environment>: media ~8s de execução JS no Lighthouse
+              mobile (fetch do HDR externo + geração de PMREM no cliente),
+              derrubando o score de performance bem abaixo de 85. Mesma
+              correção que já tinha funcionado no render do Remotion —
+              luzes fixas no lugar do envMap. A pointLight reativa do
+              PointerRig continua sendo quem faz o reflexo "escorrer". */}
+          <ambientLight intensity={0.6} />
+          <directionalLight position={[3, 4, 6]} intensity={1.6} />
+          <directionalLight position={[-4, -2, 5]} intensity={0.8} />
+          <pointLight position={[0, 0, 10]} intensity={70} />
+          <pointLight position={[-5, 3, 4]} intensity={35} color="#ffffff" />
+          <pointLight position={[4, -3, 3]} intensity={25} color="#ffffff" />
+          <pointLight position={[0, 6, -2]} intensity={20} />
+          <pointLight position={[0, -6, -2]} intensity={20} />
           <RippleBackdrop points={ripplePoints} reduceMotion={reduceMotion} />
           <Suspense fallback={null}>
-            <Environment preset="studio" background={false} environmentIntensity={1.4} />
             <PointerRig pointerState={pointerState} reduceMotion={reduceMotion} scrollYProgress={scrollYProgress} />
           </Suspense>
         </Canvas>

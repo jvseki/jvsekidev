@@ -7,15 +7,25 @@ import { Footer } from "@/components/Footer";
 import { CustomCursor } from "@/components/CustomCursor";
 import { SmoothScroll } from "@/components/SmoothScroll";
 import { site } from "@/lib/site";
+import { pageMetadata } from "@/lib/seo";
+
+const HOME_TITLE = "JVSEKI — Desenvolvedor Python freelancer, sistemas web sob medida";
+const HOME_DESCRIPTION =
+  "Desenvolvedor de software focado em back-end Python, APIs REST e sistemas web sob medida. Freelancer remoto para todo o Brasil.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.siteUrl),
+  robots: { index: true, follow: true },
+  // OG/Twitter/canonical da home vêm do helper; title fica por último de
+  // propósito — sobrescreve o title simples do helper pelo objeto
+  // {default, template}, que é o que permite "Sobre" virar "Sobre — JVSEKI"
+  // nas páginas filhas sem cada uma repetir o sufixo.
+  ...pageMetadata({ title: HOME_TITLE, description: HOME_DESCRIPTION, path: "/" }),
   title: {
-    default: "JVSEKI — Desenvolvedor Python freelancer, sistemas web sob medida",
-    template: "%s — JVSEKI",
+    default: HOME_TITLE,
+    template: `%s — ${site.brand}`,
   },
-  description:
-    "Desenvolvedor de software focado em back-end Python, APIs REST e sistemas web sob medida. Freelancer remoto para todo o Brasil.",
+  description: HOME_DESCRIPTION,
 };
 
 export const viewport: Viewport = {

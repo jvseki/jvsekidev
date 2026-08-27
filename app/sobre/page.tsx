@@ -1,15 +1,16 @@
-import type { Metadata } from "next";
 import Image from "next/image";
 import { Button } from "@/components/Button";
 import { Reveal } from "@/components/Reveal";
 import { skills, sobreParagraphs } from "@/lib/content";
 import { site, waLink, waMessages } from "@/lib/site";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Sobre",
   description:
     "João Victor Seki Mantovani — desenvolvedor de software focado em back-end Python, APIs REST e modelagem de banco de dados relacional. Cursando ADS na AEMS.",
-};
+  path: "/sobre",
+});
 
 export default function SobrePage() {
   return (

@@ -87,11 +87,14 @@ export function RippleBackdrop({ points, reduceMotion }: RippleBackdropProps) {
   const { gl } = useThree();
   const invalidate = useThree((s) => s.invalidate);
   const flip = useRef(false);
-  // Começa "recém-ativo": garante que a simulação rode pelo menos os
-  // primeiros SETTLE_MS após montar, deixando o fundo num estado limpo
-  // e a textura do shader sempre vinculada a algo válido — em vez de
-  // ficar parada pra sempre com uRipple ainda em null.
-  const lastActive = useRef(performance.now());
+  // Só começa a rodar no primeiro toque real — nada de simular os
+  // primeiros SETTLE_MS de todo carregamento de página à toa. Isso
+  // sozinho custava a mesma janela de tempo inteira em render passes +
+  // invalidate() contínuo antes de qualquer interação, pesando no
+  // Lighthouse. O material já nasce apontando pra sim.rtA.texture (um
+  // RT válido, só que preto/plano) — sem ripple ativo o fundo fica
+  // exatamente igual ao void da página, que é o estado de repouso certo.
+  const lastActive = useRef<number | null>(null);
 
   const sim = useMemo(() => {
     const opts: THREE.RenderTargetOptions = {
@@ -135,6 +138,7 @@ export function RippleBackdrop({ points, reduceMotion }: RippleBackdropProps) {
 
     const active = Array.from(points.current.values()).slice(0, MAX_TOUCHES);
     if (active.length > 0) lastActive.current = performance.now();
+    if (lastActive.current === null) return; // ninguém tocou ainda — sem trabalho nenhum
     const stillSettling = performance.now() - lastActive.current < SETTLE_MS;
     if (!stillSettling) return; // parado: nada a simular, não precisa nem trocar os RTs
 

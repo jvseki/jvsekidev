@@ -1,14 +1,15 @@
-import type { Metadata } from "next";
 import { ChannelCard } from "@/components/ChannelCard";
 import { ContactForm } from "@/components/ContactForm";
 import { Reveal } from "@/components/Reveal";
 import { site, waLink, waMessages } from "@/lib/site";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Contato",
   description:
     "Fale com a JVSEKI pelo WhatsApp, e-mail, Instagram ou GitHub. Atendimento remoto para todo o Brasil.",
-};
+  path: "/contato",
+});
 
 export default function ContatoPage() {
   return (
