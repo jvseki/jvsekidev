@@ -4,7 +4,6 @@ import { Suspense, useEffect, useRef, useState, type PointerEvent as ReactPointe
 import { Canvas, type RootState } from "@react-three/fiber";
 import { Environment } from "@react-three/drei";
 import { useScroll, useMotionValueEvent } from "framer-motion";
-import Image from "next/image";
 import { usePointerRig } from "@/lib/usePointerRig";
 import { useRipplePointers } from "@/lib/useRipplePointers";
 import { useInView } from "@/lib/useInView";
@@ -29,9 +28,9 @@ function detectCapable(): boolean {
  * hardwareConcurrency só existe no navegador) — depois de montar, se a
  * máquina aguentar, troca pro <Canvas> de verdade. Isso evita qualquer
  * mismatch de hidratação e, de quebra, já cobre o fallback exigido pra
- * hardware fraco.
- *
- * TODO(etapa 6): trocar a <Image> de fallback pelo loop .webm do Remotion.
+ * hardware fraco: em vez de imagem estática, o loop .webm do Remotion
+ * (public/video/logo-loop.webm) — mesmo J, girando sozinho, sem depender
+ * de WebGL nenhum.
  */
 export function HeroScene() {
   const [capable, setCapable] = useState(false);
@@ -126,14 +125,19 @@ export function HeroScene() {
             <PointerRig pointerState={pointerState} reduceMotion={reduceMotion} scrollYProgress={scrollYProgress} />
           </Suspense>
         </Canvas>
+      ) : reduceMotion ? (
+        // Sem WebGL e com reduced-motion: nem o vídeo autoplay entra —
+        // fica só a imagem parada, igual ao resto do site nesse modo.
+        <img src="/brand/logo-chrome.jpg" alt="" className="h-full w-full object-contain" />
       ) : (
-        <Image
-          src="/brand/logo-chrome.jpg"
-          alt=""
-          width={460}
-          height={460}
-          priority
+        <video
+          src="/video/logo-loop.webm"
+          poster="/brand/logo-chrome.jpg"
           className="h-full w-full object-contain"
+          autoPlay
+          loop
+          muted
+          playsInline
         />
       )}
     </div>
