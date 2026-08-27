@@ -2,6 +2,7 @@
 
 import { Suspense, useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { Canvas, type RootState } from "@react-three/fiber";
+import { Environment, Lightformer } from "@react-three/drei";
 import { useScroll, useMotionValueEvent } from "framer-motion";
 import { usePointerRig } from "@/lib/usePointerRig";
 import { useRipplePointers } from "@/lib/useRipplePointers";
@@ -131,20 +132,22 @@ export function HeroScene() {
             state.invalidate();
           }}
         >
-          {/* Sem <Environment>: media ~8s de execução JS no Lighthouse
-              mobile (fetch do HDR externo + geração de PMREM no cliente),
-              derrubando o score de performance bem abaixo de 85. Mesma
-              correção que já tinha funcionado no render do Remotion —
-              luzes fixas no lugar do envMap. A pointLight reativa do
-              PointerRig continua sendo quem faz o reflexo "escorrer". */}
-          <ambientLight intensity={0.6} />
-          <directionalLight position={[3, 4, 6]} intensity={1.6} />
-          <directionalLight position={[-4, -2, 5]} intensity={0.8} />
-          <pointLight position={[0, 0, 10]} intensity={70} />
-          <pointLight position={[-5, 3, 4]} intensity={35} color="#ffffff" />
-          <pointLight position={[4, -3, 3]} intensity={25} color="#ffffff" />
-          <pointLight position={[0, 6, -2]} intensity={20} />
-          <pointLight position={[0, -6, -2]} intensity={20} />
+          {/* <Environment preset="studio"> media ~8s de JS no Lighthouse
+              mobile (fetch de um HDR externo + PMREM). Cranking a
+              intensidade de pointLights não resolveu: metal só reflete de
+              ângulos específicos — sem luz vindo de uma direção, aquele
+              trecho do bisel fica escuro não importa a intensidade das
+              outras. <Environment> com <Lightformer> gera o mapa de
+              reflexo localmente (sem fetch nenhum), então cobre muito mais
+              direções ao mesmo custo de uma textura pequena computada uma
+              vez no mount — não por frame, como acontecia no Remotion. */}
+          <ambientLight intensity={0.15} />
+          <Environment resolution={64} background={false}>
+            <Lightformer form="rect" intensity={1.1} position={[0, 3, 4]} scale={[6, 3, 1]} />
+            <Lightformer form="rect" intensity={0.7} position={[-4, 0, 3]} scale={[3, 5, 1]} rotation-y={Math.PI / 3} />
+            <Lightformer form="rect" intensity={0.7} position={[4, 0, 3]} scale={[3, 5, 1]} rotation-y={-Math.PI / 3} />
+            <Lightformer form="ring" intensity={0.9} position={[0, 0, 6]} scale={4} />
+          </Environment>
           <RippleBackdrop points={ripplePoints} reduceMotion={reduceMotion} />
           <Suspense fallback={null}>
             <PointerRig pointerState={pointerState} reduceMotion={reduceMotion} scrollYProgress={scrollYProgress} />

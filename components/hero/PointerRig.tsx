@@ -79,7 +79,7 @@ export function PointerRig({ pointerState, reduceMotion, scrollYProgress }: Poin
 
   return (
     <>
-      <pointLight ref={light} position={[0, 2, 4]} intensity={22} color="#ffffff" />
+      <pointLight ref={light} position={[0, 2, 4]} intensity={10} color="#ffffff" />
       <JMark ref={group} />
     </>
   );

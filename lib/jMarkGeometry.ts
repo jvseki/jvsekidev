@@ -49,8 +49,12 @@ export function createChromeMaterial() {
   return new THREE.MeshPhysicalMaterial({
     color: "#ffffff",
     metalness: 1,
-    roughness: 0.05,
-    envMapIntensity: 1.6,
+    // 0.05 (quase espelho perfeito) refletindo um ambiente Lightformer de
+    // resolução baixa (64) lia como manchas chapadas em vez de gradiente
+    // metálico — um pouco mais de rugosidade borra o suficiente pra
+    // parecer superfície polida de verdade, não plástico liso.
+    roughness: 0.16,
+    envMapIntensity: 0.85,
     clearcoat: 0.4,
   });
 }
