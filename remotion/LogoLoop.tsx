@@ -43,8 +43,11 @@ export function LogoLoop() {
   // Depth bem maior que a versão ao vivo (22): girando 360° completos, uma
   // placa fina some de vista em perfil perto de 90°/270°. Mais espessura
   // garante silhueta reconhecível no giro inteiro, não só nos ±18° de
-  // parallax que o hero ao vivo usa.
-  const geometry = useMemo(() => buildJMarkGeometry({ depth: 70 }), []);
+  // parallax que o hero ao vivo usa. curveSegments/bevelSegments reduzidos
+  // pelo mesmo motivo do hero ao vivo (ver ExtrudedJMark) — com depth
+  // maior ainda, o padrão (24/8) deixaria cada um dos 180 frames mais
+  // pesado de renderizar, sem ganho visual perceptível no resultado final.
+  const geometry = useMemo(() => buildJMarkGeometry({ depth: 70, curveSegments: 5, bevelSegments: 3 }), []);
   const chrome = useMemo(() => createChromeMaterial(), []);
 
   return (

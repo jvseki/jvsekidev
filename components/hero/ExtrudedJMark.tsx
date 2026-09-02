@@ -12,10 +12,13 @@ import { buildJMarkGeometry, createChromeMaterial } from "@/lib/jMarkGeometry";
  * luz reativa varre a superfície.
  */
 export function ExtrudedJMark() {
-  // curveSegments/bevelSegments reduzidos em relação ao padrão (24/8) —
-  // silhueta praticamente idêntica em ±18° de parallax, com menos
-  // triângulos pra compilar shader e desenhar. Geometria, não conteúdo.
-  const geometry = useMemo(() => buildJMarkGeometry({ curveSegments: 14, bevelSegments: 5 }), []);
+  // curveSegments/bevelSegments bem abaixo do padrão (24/8): o contorno
+  // vetorizado (potrace) já vem com muitos comandos de curva próprios —
+  // cada um subdividido pelo curveSegments — então o mesmo valor usado no
+  // J antigo (14) gerava ~20 mil triângulos aqui. 5/3 volta pra ~4.8 mil
+  // (o antigo, mais simples, ficava em ~760) sem ficar visivelmente
+  // facetado nas curvas.
+  const geometry = useMemo(() => buildJMarkGeometry({ curveSegments: 5, bevelSegments: 3 }), []);
   const chrome = useMemo(() => createChromeMaterial(), []);
 
   return <mesh geometry={geometry} material={chrome} scale={0.024} />;

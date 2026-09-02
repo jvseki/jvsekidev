@@ -33,8 +33,8 @@ export default function HomePage() {
       {/* 01 · HERO — fundo #050506 puro. O canvas WebGL com o "J" cromado
           entra na etapa 4 no lugar da imagem estática abaixo. */}
       <section className="relative overflow-hidden">
-        <div className="wrap grid min-h-[68svh] items-center gap-8 py-14 md:min-h-[calc(100svh-72px)] md:grid-cols-2 md:gap-12 md:py-24">
-          <Reveal className="relative z-10" transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}>
+        <div className="wrap grid gap-10 py-14 md:min-h-[calc(100svh-72px)] md:grid-cols-2 md:items-center md:gap-12 md:py-24">
+          <Reveal transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}>
             <h1 className="type-display max-w-[16ch] text-[clamp(2.1rem,8vw,3.75rem)] leading-[1.08]">
               Sistemas sob medida, do banco ao deploy.
             </h1>
@@ -54,9 +54,13 @@ export default function HomePage() {
             </div>
           </Reveal>
 
-          {/* Mobile: canvas atrás do texto (opacidade reduzida, texto legível por cima).
-              Desktop: coluna própria, em opacidade e escala plenas. */}
-          <div className="absolute inset-0 z-0 opacity-[0.22] md:static md:self-stretch md:opacity-100">
+          {/* Bloco próprio, em opacidade plena, tanto no mobile quanto no
+              desktop — antes o mobile jogava o canvas como marca d'água
+              atrás do texto (opacity 0.22) e o J praticamente sumia. Sem
+              sobreposição com o texto, não tem risco de contraste, e o
+              conteúdo crítico (headline/CTA) continua vindo primeiro no
+              DOM — o canvas pesado só entra depois, sem afetar LCP. */}
+          <div className="relative mx-auto aspect-square w-full max-w-[360px] md:mx-0 md:aspect-auto md:h-full md:max-w-none">
             <HeroScene />
           </div>
         </div>
