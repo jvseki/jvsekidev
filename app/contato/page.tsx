@@ -1,3 +1,5 @@
+import { ScrambleText } from "@/components/fx/ScrambleText";
+import { SplitWords } from "@/components/fx/SplitWords";
 import { ChannelCard } from "@/components/ChannelCard";
 import { ContactForm } from "@/components/ContactForm";
 import { Reveal } from "@/components/Reveal";
@@ -15,9 +17,9 @@ export default function ContatoPage() {
   return (
     <section className="py-16 md:py-20">
       <div className="wrap">
-        <p className="eyebrow">Contato</p>
+        <p className="eyebrow"><ScrambleText text="Contato" /></p>
         <h1 className="type-display mt-3 max-w-[24ch] text-[clamp(2rem,4.5vw,2.75rem)] leading-tight">
-          Vamos conversar sobre o seu projeto.
+          <SplitWords text="Vamos conversar sobre o seu projeto." />
         </h1>
         <p className="mt-4 max-w-[52ch] text-mute">
           {site.serviceArea}. Descreva o que você precisa — respondo com prazo e próximos passos.

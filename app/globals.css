@@ -130,37 +130,91 @@
     background: radial-gradient(circle at var(--glare-x, 50%) var(--glare-y, 50%), #fff, transparent 60%);
   }
 
+  /* Borda que acende seguindo o ponteiro — reaproveita as mesmas
+     --glare-x/--glare-y do tilt. O mask com dois layers (content-box
+     XOR border-box) deixa o gradiente visível só no 1px da borda. */
+  .tilt::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    pointer-events: none;
+    background: radial-gradient(
+      260px circle at var(--glare-x, 50%) var(--glare-y, 50%),
+      rgba(255, 255, 255, 0.55),
+      transparent 70%
+    );
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+    opacity: var(--glare-o, 0);
+    transition: opacity var(--duration-standard) var(--ease-standard);
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .tilt {
       transform: none !important;
     }
-    .tilt-glare {
+    .tilt-glare,
+    .tilt::before {
       display: none;
     }
   }
 
-  /* Cursor customizado — desktop only, injetado/controlado via JS. */
+  /* Cursor customizado — desktop only, injetado/controlado via JS.
+     Anel com inércia + ponto exato. Ativo: disco em difference, que
+     inverte o que estiver embaixo (texto branco vira preto etc). */
   .custom-cursor {
     position: fixed;
     top: 0;
     left: 0;
-    width: 22px;
-    height: 22px;
-    margin: -11px 0 0 -11px;
+    width: 34px;
+    height: 34px;
+    margin: -17px 0 0 -17px;
     border-radius: 9999px;
-    border: 1px solid var(--text);
+    border: 1px solid rgba(245, 245, 247, 0.55);
     pointer-events: none;
     z-index: 999;
-    transition: width var(--duration-fast) var(--ease-standard), height var(--duration-fast) var(--ease-standard),
-      background var(--duration-fast) var(--ease-standard), opacity var(--duration-fast) var(--ease-standard);
+    transition: width 0.35s var(--ease-standard), height 0.35s var(--ease-standard),
+      margin 0.35s var(--ease-standard), background 0.35s var(--ease-standard),
+      border-color 0.35s var(--ease-standard), opacity var(--duration-fast) var(--ease-standard);
     will-change: transform;
   }
 
   .custom-cursor[data-active="true"] {
-    width: 40px;
-    height: 40px;
-    margin: -20px 0 0 -20px;
+    width: 64px;
+    height: 64px;
+    margin: -32px 0 0 -32px;
     background: var(--text);
+    border-color: var(--text);
+    mix-blend-mode: difference;
+  }
+
+  .custom-cursor[data-pressed="true"] {
+    width: 24px;
+    height: 24px;
+    margin: -12px 0 0 -12px;
+  }
+
+  .custom-cursor-dot {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 4px;
+    margin: -2px 0 0 -2px;
+    border-radius: 9999px;
+    background: var(--text);
+    pointer-events: none;
+    z-index: 1000;
+    mix-blend-mode: difference;
+    transition: opacity var(--duration-fast) var(--ease-standard);
+    will-change: transform;
+  }
+
+  .custom-cursor-dot[data-active="true"] {
+    opacity: 0 !important;
   }
 
   .has-custom-cursor,
@@ -187,17 +241,48 @@
       background var(--duration-fast) var(--ease-standard);
   }
 
-  /* Cromo aparece no traço, nunca preenchendo o botão. */
+  /* Cromo aparece no traço, nunca preenchendo o botão. No hover o
+     gradiente do traço desliza (o reflexo "corre" pela borda) e uma
+     faixa de luz branca atravessa o botão uma vez. */
   .btn-chrome {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
     color: var(--text);
     background-image: linear-gradient(var(--bg-void), var(--bg-void)), var(--chrome);
     background-origin: border-box;
     background-clip: padding-box, border-box;
+    background-size: 100% 100%, 250% 250%;
+    background-position: 0 0, 0% 50%;
     border: 1px solid transparent;
+    transition: transform var(--duration-fast) var(--ease-standard),
+      background-position 0.9s var(--ease-standard);
+  }
+
+  .btn-chrome::after {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    z-index: -1;
+    pointer-events: none;
+    background: linear-gradient(
+      105deg,
+      transparent 35%,
+      rgba(255, 255, 255, 0.16) 48%,
+      rgba(255, 255, 255, 0.04) 55%,
+      transparent 65%
+    );
+    transform: translateX(-120%);
   }
 
   .btn-chrome:hover {
     background-image: linear-gradient(var(--bg-panel), var(--bg-panel)), var(--chrome);
+    background-position: 0 0, 100% 50%;
+  }
+
+  .btn-chrome:hover::after {
+    transform: translateX(120%);
+    transition: transform 0.9s var(--ease-standard);
   }
 
   .btn-ghost {
@@ -219,6 +304,239 @@
   @media (max-width: 640px) {
     .wrap {
       width: min(100% - 2rem, var(--container-max));
+    }
+  }
+
+  .header-glass {
+    background: color-mix(in srgb, var(--bg-void) 72%, transparent);
+  }
+
+  /* Faixa de luz monocromática varrendo o texto — não é o cromo (esse
+     fica restrito a logo/numerais/CTA), é só branco sobre cinza. */
+  .text-shine {
+    background-image: linear-gradient(
+      100deg,
+      var(--text-mute) 0%,
+      var(--text-mute) 38%,
+      var(--text) 50%,
+      var(--text-mute) 62%,
+      var(--text-mute) 100%
+    );
+    background-size: 300% 100%;
+    background-position: 100% 0;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: text-shine 5.5s var(--ease-standard) 1.4s infinite;
+  }
+
+  @keyframes text-shine {
+    0% {
+      background-position: 100% 0;
+    }
+    45%,
+    100% {
+      background-position: 0% 0;
+    }
+  }
+
+  /* Pill de status do hero com ponto pulsando. */
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.4rem 0.85rem 0.4rem 0.7rem;
+    border: var(--hairline);
+    border-radius: 9999px;
+    background: color-mix(in srgb, var(--bg-panel) 70%, transparent);
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-mute);
+  }
+
+  .status-dot {
+    position: relative;
+    width: 7px;
+    height: 7px;
+    border-radius: 9999px;
+    background: var(--text);
+  }
+
+  .status-dot::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--text);
+    animation: status-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+
+  @keyframes status-ping {
+    75%,
+    100% {
+      transform: scale(3);
+      opacity: 0;
+    }
+  }
+
+  /* Fundo do hero: grid de pontos + spot que segue o ponteiro. */
+  .hero-backdrop {
+    --mx: 70%;
+    --my: 45%;
+    --spot-o: 0.6;
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .hero-backdrop__grid {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(245, 245, 247, 0.09) 1px, transparent 1.2px);
+    background-size: 28px 28px;
+    background-position: center;
+    -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, #000 30%, transparent 80%);
+    mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, #000 30%, transparent 80%);
+  }
+
+  .hero-backdrop__grid--lit {
+    background-image: radial-gradient(circle, rgba(245, 245, 247, 0.55) 1px, transparent 1.3px);
+    -webkit-mask-image: radial-gradient(220px circle at var(--mx) var(--my), #000, transparent 75%);
+    mask-image: radial-gradient(220px circle at var(--mx) var(--my), #000, transparent 75%);
+    opacity: var(--spot-o);
+    transition: opacity 0.6s var(--ease-standard);
+  }
+
+  .hero-backdrop__halo {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      560px circle at var(--mx) var(--my),
+      rgba(255, 255, 255, 0.045),
+      transparent 70%
+    );
+    opacity: var(--spot-o);
+  }
+
+  /* Indicador de scroll: uma gota de luz descendo por uma hairline. */
+  .scroll-cue {
+    position: relative;
+    width: 1px;
+    height: 44px;
+    background: var(--stroke);
+    overflow: hidden;
+  }
+
+  .scroll-cue::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: -40%;
+    width: 1px;
+    height: 40%;
+    background: linear-gradient(transparent, var(--text));
+    animation: scroll-cue 2.2s var(--ease-standard) infinite;
+  }
+
+  @keyframes scroll-cue {
+    to {
+      top: 100%;
+    }
+  }
+
+  /* Marquee da stack. */
+  .marquee {
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  }
+
+  .marquee__track {
+    display: flex;
+    width: max-content;
+    animation: marquee 38s linear infinite;
+  }
+
+  .marquee:hover .marquee__track {
+    animation-play-state: paused;
+  }
+
+  .marquee__row {
+    display: flex;
+    flex-shrink: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .marquee__item {
+    display: flex;
+    align-items: center;
+    font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+    font-weight: 650;
+    font-size: clamp(2rem, 5.5vw, 4rem);
+    letter-spacing: -0.035em;
+    line-height: 1.1;
+    white-space: nowrap;
+  }
+
+  .marquee__solid {
+    color: var(--text);
+  }
+
+  .marquee__outline {
+    color: transparent;
+    -webkit-text-stroke: 1px var(--text-mute);
+  }
+
+  .marquee__sep {
+    margin-inline: clamp(1.25rem, 3vw, 2.25rem);
+    font-size: 0.4em;
+    color: var(--text-mute);
+  }
+
+  @keyframes marquee {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  /* Grain de filme por cima de tudo — textura, não conteúdo. SVG de
+     ruído inline (sem request), deslocado em steps pra "tremer". */
+  .grain {
+    position: fixed;
+    inset: -50%;
+    z-index: 70;
+    pointer-events: none;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    animation: grain 1s steps(6) infinite;
+  }
+
+  @keyframes grain {
+    0% { transform: translate(0, 0); }
+    20% { transform: translate(-3%, 2%); }
+    40% { transform: translate(2%, -4%); }
+    60% { transform: translate(-4%, -2%); }
+    80% { transform: translate(3%, 3%); }
+    100% { transform: translate(0, 0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .text-shine {
+      animation: none;
+      background: none;
+      color: var(--text-mute);
+    }
+    .marquee__track,
+    .grain,
+    .status-dot::after,
+    .scroll-cue::after {
+      animation: none !important;
+    }
+    .marquee {
+      overflow-x: auto;
     }
   }
 }

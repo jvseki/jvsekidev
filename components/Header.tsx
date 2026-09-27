@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { motion, useMotionValueEvent, useScroll } from "framer-motion";
 import { Button } from "./Button";
 import { site, waLink, waMessages } from "@/lib/site";
 
@@ -17,9 +18,28 @@ const NAV = [
 export function Header() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const { scrollY } = useScroll();
+  const [hidden, setHidden] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  // Some ao rolar pra baixo (mais tela pro conteúdo), volta no primeiro
+  // gesto pra cima. Nunca some no topo da página nem com o menu aberto.
+  useMotionValueEvent(scrollY, "change", (y) => {
+    const prev = scrollY.getPrevious() ?? 0;
+    setScrolled(y > 8);
+    if (y < 120) setHidden(false);
+    else if (y > prev + 4) setHidden(true);
+    else if (y < prev - 4) setHidden(false);
+  });
 
   return (
-    <header className="sticky top-0 z-50 border-b border-stroke bg-void/85 backdrop-blur">
+    <motion.header
+      className={`sticky top-0 z-50 border-b backdrop-blur-md transition-colors duration-300 ${
+        scrolled ? "header-glass border-stroke" : "border-transparent"
+      }`}
+      animate={{ y: hidden && !open ? "-100%" : "0%" }}
+      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+    >
       <div className="wrap flex h-[72px] items-center justify-between gap-4">
         <Link
           href="/"
@@ -89,6 +109,6 @@ export function Header() {
           </Button>
         </nav>
       </div>
-    </header>
+    </motion.header>
   );
 }
