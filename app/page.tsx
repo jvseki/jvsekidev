@@ -3,11 +3,16 @@ import Image from "next/image";
 import dynamic from "next/dynamic";
 import { Button } from "@/components/Button";
 import { CapabilityCard } from "@/components/CapabilityCard";
-import { StepCard } from "@/components/StepCard";
+import { HeroBackdrop } from "@/components/fx/HeroBackdrop";
+import { Marquee } from "@/components/fx/Marquee";
+import { ScrambleText } from "@/components/fx/ScrambleText";
+import { ScrollRevealText } from "@/components/fx/ScrollRevealText";
+import { SplitWords } from "@/components/fx/SplitWords";
+import { StepsTimeline } from "@/components/fx/StepsTimeline";
 import { SectionHeading } from "@/components/SectionHeading";
 import { Reveal } from "@/components/Reveal";
-import { capabilities, howWeWork, timelines } from "@/lib/content";
-import { waLink, waMessages } from "@/lib/site";
+import { capabilities, howWeWork, skills, timelines } from "@/lib/content";
+import { site, waLink, waMessages } from "@/lib/site";
 
 // three.js + fiber + drei são pesados demais pra ir no bundle inicial —
 // carrega só no cliente, sob demanda. Nunca roda no servidor (WebGL não
@@ -30,29 +35,43 @@ const HeroScene = dynamic(() => import("@/components/hero/HeroScene").then((m) =
 export default function HomePage() {
   return (
     <>
-      {/* 01 · HERO — fundo #050506 puro. O canvas WebGL com o "J" cromado
-          entra na etapa 4 no lugar da imagem estática abaixo. */}
-      <section className="relative overflow-hidden">
-        <div className="wrap grid gap-10 py-14 md:min-h-[calc(100svh-72px)] md:grid-cols-2 md:items-center md:gap-12 md:py-24">
-          <Reveal transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}>
-            <h1 className="type-display max-w-[16ch] text-[clamp(2.1rem,8vw,3.75rem)] leading-[1.08]">
-              Sistemas sob medida, do banco ao deploy.
+      {/* 01 · HERO — fundo #050506 com grid de pontos que acende em volta
+          do ponteiro, headline entrando palavra por palavra, J cromado em
+          WebGL à direita. */}
+      <section className="relative -mt-[72px] overflow-hidden pt-[72px]">
+        <HeroBackdrop />
+        <div className="wrap relative grid gap-10 py-14 md:min-h-[calc(100svh-72px)] md:grid-cols-2 md:items-center md:gap-12 md:py-24">
+          <div>
+            <Reveal transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}>
+              <p className="status-pill">
+                <span className="status-dot" aria-hidden="true" />
+                {site.serviceArea}
+              </p>
+            </Reveal>
+            <h1 className="type-display mt-6 max-w-[16ch] text-[clamp(2.1rem,8vw,3.75rem)] leading-[1.08]">
+              <SplitWords text="Sistemas sob medida," delay={0.1} />{" "}
+              <SplitWords text="do banco ao deploy." delay={0.3} whole innerClassName="text-shine" />
             </h1>
-            <p className="mt-5 max-w-[38ch] text-[1.05rem] text-mute md:mt-6">
-              Desenvolvedor back-end Python. Freelance, remoto, para todo o Brasil.
-            </p>
-            <div className="mt-8 md:mt-9">
-              <Button
-                variant="chrome"
-                href={waLink(waMessages.hero)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full sm:w-auto"
-              >
-                Falar sobre seu projeto →
-              </Button>
-            </div>
-          </Reveal>
+            <Reveal delay={0.55} transition={{ duration: 0.8, delay: 0.55, ease: [0.22, 1, 0.36, 1] }}>
+              <p className="mt-5 max-w-[38ch] text-[1.05rem] text-mute md:mt-6">
+                Desenvolvedor back-end Python. Freelance, remoto, para todo o Brasil.
+              </p>
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row md:mt-9">
+                <Button
+                  variant="chrome"
+                  href={waLink(waMessages.hero)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full sm:w-auto"
+                >
+                  Falar sobre seu projeto →
+                </Button>
+                <Button variant="ghost" href="/projetos" className="w-full sm:w-auto">
+                  Ver projetos
+                </Button>
+              </div>
+            </Reveal>
+          </div>
 
           {/* Bloco próprio, em opacidade plena, tanto no mobile quanto no
               desktop — antes o mobile jogava o canvas como marca d'água
@@ -64,6 +83,16 @@ export default function HomePage() {
             <HeroScene />
           </div>
         </div>
+
+        <div className="pointer-events-none absolute inset-x-0 bottom-6 hidden flex-col items-center gap-3 md:flex" aria-hidden="true">
+          <span className="eyebrow text-[0.65rem]">Role</span>
+          <span className="scroll-cue" />
+        </div>
+      </section>
+
+      {/* Faixa da stack */}
+      <section className="border-t border-stroke py-8 md:py-10">
+        <Marquee items={skills} />
       </section>
 
       {/* 02 · O QUE EU CONSTRUO */}
@@ -101,13 +130,7 @@ export default function HomePage() {
             <SectionHeading eyebrow="Como trabalho" title="Do primeiro contato à manutenção contínua." />
           </Reveal>
 
-          <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {howWeWork.map((step, i) => (
-              <Reveal key={step.n} delay={i * 0.06}>
-                <StepCard {...step} />
-              </Reveal>
-            ))}
-          </div>
+          <StepsTimeline steps={howWeWork} />
 
           <Reveal className="panel mt-10 flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
             <p className="eyebrow">Prazo médio</p>
@@ -122,20 +145,26 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA final */}
-      <section className="border-t border-stroke py-16">
-        <div className="wrap flex flex-col items-start gap-5 sm:flex-row sm:items-center sm:justify-between">
-          <h2 className="type-display max-w-[24ch] text-[clamp(1.4rem,3vw,1.9rem)]">
-            Tem um sistema em mente? Vamos conversar sobre ele.
-          </h2>
-          <div className="flex flex-wrap gap-3">
+      {/* CTA final — frase gigante que acende palavra por palavra com o scroll */}
+      <section className="relative overflow-hidden border-t border-stroke py-[var(--space-section)]">
+        <div className="wrap">
+          <p className="eyebrow flex items-center gap-3">
+            <span className="h-px w-6 bg-mute" aria-hidden="true" />
+            <ScrambleText text="Próximo passo" />
+          </p>
+          <ScrollRevealText
+            as="h2"
+            text="Tem um sistema em mente? Vamos conversar sobre ele."
+            className="type-display mt-5 max-w-[18ch] text-[clamp(2.2rem,7vw,5.5rem)] leading-[1.02]"
+          />
+          <Reveal className="mt-10 flex flex-wrap gap-3">
             <Button variant="chrome" href={waLink(waMessages.hero)} target="_blank" rel="noopener noreferrer">
-              Falar no WhatsApp
+              Falar no WhatsApp →
             </Button>
             <Button variant="ghost" href="/projetos">
               Ver projetos
             </Button>
-          </div>
+          </Reveal>
         </div>
       </section>
     </>

@@ -1,3 +1,5 @@
+import { ScrambleText } from "@/components/fx/ScrambleText";
+import { SplitWords } from "@/components/fx/SplitWords";
 import { CaseCard } from "@/components/CaseCard";
 import { Button } from "@/components/Button";
 import { Reveal } from "@/components/Reveal";
@@ -15,9 +17,9 @@ export default function ProjetosPage() {
   return (
     <section className="py-16 md:py-20">
       <div className="wrap">
-        <p className="eyebrow">Projetos</p>
+        <p className="eyebrow"><ScrambleText text="Projetos" /></p>
         <h1 className="type-display mt-3 max-w-[22ch] text-[clamp(2rem,4.5vw,2.75rem)] leading-tight">
-          Seis sistemas reais, do banco ao deploy.
+          <SplitWords text="Seis sistemas reais, do banco ao deploy." />
         </h1>
         <p className="mt-4 max-w-[52ch] text-mute">
           Loja, escola, estúdio, delivery, portfólio audiovisual e uma plataforma SaaS em operação.

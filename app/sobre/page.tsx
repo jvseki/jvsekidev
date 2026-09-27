@@ -1,3 +1,4 @@
+import { ScrambleText } from "@/components/fx/ScrambleText";
 import Image from "next/image";
 import { Button } from "@/components/Button";
 import { Reveal } from "@/components/Reveal";
@@ -28,7 +29,7 @@ export default function SobrePage() {
         </Reveal>
 
         <Reveal delay={0.08}>
-          <p className="eyebrow">Sobre</p>
+          <p className="eyebrow"><ScrambleText text="Sobre" /></p>
           <h1 className="type-display mt-3 text-[clamp(1.9rem,4vw,2.5rem)] leading-tight">
             João Victor Seki Mantovani
           </h1>
@@ -41,7 +42,7 @@ export default function SobrePage() {
             ))}
           </div>
 
-          <p className="eyebrow mt-9">Stack</p>
+          <p className="eyebrow mt-9"><ScrambleText text="Stack" /></p>
           <ul className="mt-4 flex flex-wrap gap-2" aria-label="Stack técnica">
             {skills.map((s) => (
               <li key={s} className="chip">

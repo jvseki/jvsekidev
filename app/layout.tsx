@@ -6,6 +6,8 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { CustomCursor } from "@/components/CustomCursor";
 import { SmoothScroll } from "@/components/SmoothScroll";
+import { MotionProvider } from "@/components/fx/MotionProvider";
+import { ScrollProgress } from "@/components/fx/ScrollProgress";
 import { site } from "@/lib/site";
 import { pageMetadata } from "@/lib/seo";
 
@@ -38,11 +40,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="pt-BR" className={`${GeistSans.variable} ${GeistMono.variable}`}>
       <body className="flex min-h-screen flex-col">
-        <SmoothScroll />
-        <CustomCursor />
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        <MotionProvider>
+          <SmoothScroll />
+          <CustomCursor />
+          <ScrollProgress />
+          <Header />
+          <main className="flex-1">{children}</main>
+          <Footer />
+          <div className="grain" aria-hidden="true" />
+        </MotionProvider>
       </body>
     </html>
   );
