@@ -6,6 +6,8 @@ type PageSeoInput = {
   description: string;
   /** Caminho absoluto a partir da raiz, ex.: "/", "/sobre". */
   path: string;
+  /** Imagem de compartilhamento; sem isto usa o /og.jpg padrão da marca. */
+  image?: { url: string; width: number; height: number; alt: string };
 };
 
 /**
@@ -14,8 +16,9 @@ type PageSeoInput = {
  * locais" em lugar nenhum aqui, o eixo é: dev Python freelancer, sistemas
  * sob medida, atendimento remoto no Brasil inteiro.
  */
-export function pageMetadata({ title, description, path }: PageSeoInput): Metadata {
+export function pageMetadata({ title, description, path, image }: PageSeoInput): Metadata {
   const url = `${site.siteUrl}${path === "/" ? "" : path}`;
+  const og = image ?? { url: "/og.jpg", width: 1200, height: 630, alt: `${site.brand} — ${site.role}` };
 
   return {
     title,
@@ -28,13 +31,13 @@ export function pageMetadata({ title, description, path }: PageSeoInput): Metada
       siteName: site.brand,
       locale: "pt_BR",
       type: "website",
-      images: [{ url: "/og.jpg", width: 1200, height: 630, alt: `${site.brand} — ${site.role}` }],
+      images: [og],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: ["/og.jpg"],
+      images: [og.url],
     },
   };
 }
