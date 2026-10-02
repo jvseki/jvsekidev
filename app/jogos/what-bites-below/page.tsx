@@ -1,16 +1,14 @@
 import type { Metadata } from "next";
-import { Silkscreen } from "next/font/google";
+import Link from "next/link";
 import { GameEmbed } from "@/components/game/GameEmbed";
+import { PixelIcon } from "@/components/game/PixelIcon";
 import { PlayButton } from "@/components/game/PlayButton";
+import { YouTubeEmbed } from "@/components/game/YouTubeEmbed";
 import { Reveal } from "@/components/Reveal";
 import { whatBitesBelow as game } from "@/lib/games";
 import { pageMetadata } from "@/lib/seo";
-import "./wbb.css";
-
-// Fonte pixel só pros títulos desta página — carregada aqui, não no
-// layout, pra não pesar no resto do site. Só o peso 400: no 700 o "W"
-// vira um bloco ilegível ("WHAT" lia como "▀HAT").
-const pixel = Silkscreen({ weight: ["400"], subsets: ["latin"], variable: "--font-pixel", display: "swap" });
+import { pixelFont } from "@/lib/fonts";
+import "@/styles/wbb.css";
 
 const TITLE = "What Bites Below (demo) — jvseki dev";
 const DESCRIPTION =
@@ -31,7 +29,7 @@ const GAME_ID = "jogar";
 
 export default function WhatBitesBelowPage() {
   return (
-    <div className={`wbb ${pixel.variable}`}>
+    <div className={`wbb wbb-page ${pixelFont.variable}`}>
       {/* 1 · Topo */}
       <section className="wbb-hero">
         {/* eslint-disable-next-line @next/next/no-img-element -- pixel art: sem reamostragem do next/image */}
@@ -55,6 +53,9 @@ export default function WhatBitesBelowPage() {
                   Ver no itch.io
                 </a>
               ) : null}
+              <Link href={game.supportPath} className="wbb-btn">
+                ♥ Apoie
+              </Link>
             </div>
           </Reveal>
         </div>
@@ -75,23 +76,14 @@ export default function WhatBitesBelowPage() {
         </div>
       </section>
 
-      {/* 3 · Trailer — hospedado no próprio site (preload=none: só baixa ao dar play) */}
+      {/* 3 · Trailer — YouTube (nocookie), carregado só no clique */}
       <section className="wbb-section" aria-labelledby="wbb-trailer">
         <div className="wrap">
           <h2 id="wbb-trailer" className="wbb-h2">
             Trailer
           </h2>
           <div className="mx-auto mt-6 max-w-[960px]">
-            <video
-              src={game.trailerSrc}
-              poster={game.img.thumbnail}
-              controls
-              preload="none"
-              playsInline
-              className="wbb-frame wbb-pixel block h-auto w-full"
-            >
-              Seu navegador não reproduz vídeo. <a href={game.trailerSrc}>Baixe o trailer</a>.
-            </video>
+            <YouTubeEmbed id={game.trailerYouTubeId} title={`${game.name} — trailer`} poster={game.img.thumbnail} />
           </div>
         </div>
       </section>
@@ -129,35 +121,87 @@ export default function WhatBitesBelowPage() {
               Jogar no navegador
             </PlayButton>
           </div>
-          <div className="wbb-pc-only mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
+          <div className="wbb-pc-only mt-6 grid grid-cols-1 gap-5 md:grid-cols-3">
+            {/* Windows */}
             {game.windowsZipUrl ? (
-              <a href={game.windowsZipUrl} target="_blank" rel="noopener noreferrer" className="wbb-card">
-                <span className="wbb-card__label">Windows</span>
-                <span className="wbb-card__meta">.zip · 166 MB</span>
-                <span className="wbb-mute mt-3 block text-[0.9rem]">
-                  Na primeira vez o Windows pode avisar “O Windows protegeu o computador”. Clique em Mais
-                  informações → Executar assim mesmo.
+              <a href={game.windowsZipUrl} target="_blank" rel="noopener noreferrer" className="wbb-dl">
+                <span className="wbb-dl__icon">
+                  <PixelIcon name="windows" />
                 </span>
+                <span className="wbb-dl__title">Windows</span>
+                <span className="wbb-dl__tags">
+                  <span>.zip</span>
+                  <span>166 MB</span>
+                  <span>v{game.version}</span>
+                </span>
+                <span className="wbb-dl__body">
+                  Na primeira vez o Windows pode avisar “O Windows protegeu o computador”. Clique em{" "}
+                  <b>Mais informações → Executar assim mesmo</b>.
+                </span>
+                <span className="wbb-dl__cta">↓ Baixar para Windows</span>
               </a>
             ) : (
-              <div className="wbb-card wbb-card--soon" aria-disabled="true">
-                <span className="wbb-card__label">Windows</span>
-                <span className="wbb-card__meta">Em breve</span>
+              <div className="wbb-dl wbb-dl--soon" aria-disabled="true">
+                <span className="wbb-dl__ribbon">Em breve</span>
+                <span className="wbb-dl__icon">
+                  <PixelIcon name="windows" />
+                </span>
+                <span className="wbb-dl__title">Windows</span>
+                <span className="wbb-dl__tags">
+                  <span>.zip</span>
+                  <span>166 MB</span>
+                </span>
+                <span className="wbb-dl__body">
+                  Versão instalável para PC, com tela cheia nativa. Chegando por aqui em breve.
+                </span>
+                <span className="wbb-dl__cta">Em breve</span>
               </div>
             )}
-            <a href={game.offlineZip} download className="wbb-card">
-              <span className="wbb-card__label">Offline</span>
-              <span className="wbb-card__meta">.zip · 0,3 MB</span>
-              <span className="wbb-mute mt-3 block text-[0.9rem]">
-                Abra o index.html com dois cliques; funciona sem internet.
+
+            {/* Offline — destaque: é o download disponível agora */}
+            <a href={game.offlineZip} download className="wbb-dl wbb-dl--featured">
+              <span className="wbb-dl__ribbon">Recomendado</span>
+              <span className="wbb-dl__icon">
+                <PixelIcon name="floppy" />
               </span>
+              <span className="wbb-dl__title">Offline</span>
+              <span className="wbb-dl__tags">
+                <span>.zip</span>
+                <span>0,3 MB</span>
+                <span>v{game.version}</span>
+              </span>
+              <ol className="wbb-dl__steps">
+                <li>Baixe e extraia o .zip</li>
+                <li>Dois cliques no index.html</li>
+                <li>Joga sem internet</li>
+              </ol>
+              <span className="wbb-dl__cta">↓ Baixar .zip</span>
             </a>
-            <PlayButton targetId={GAME_ID} className="wbb-card">
-              <span className="wbb-card__label">Navegador</span>
-              <span className="wbb-card__meta">Sem instalar nada</span>
-              <span className="wbb-mute mt-3 block text-[0.9rem]">Jogue aqui mesmo, nesta página.</span>
+
+            {/* Navegador */}
+            <PlayButton targetId={GAME_ID} className="wbb-dl">
+              <span className="wbb-dl__icon">
+                <PixelIcon name="browser" />
+              </span>
+              <span className="wbb-dl__title">Navegador</span>
+              <span className="wbb-dl__tags">
+                <span>HTML5</span>
+                <span>Sem instalar</span>
+              </span>
+              <span className="wbb-dl__body">
+                Jogue aqui mesmo, nesta página. O progresso fica salvo no próprio navegador (3 slots).
+              </span>
+              <span className="wbb-dl__cta">▶ Jogar agora</span>
             </PlayButton>
           </div>
+
+          <p className="wbb-pc-only wbb-mute mt-6 text-[0.9rem]">
+            Curtiu?{" "}
+            <Link href={game.supportPath} className="wbb-link">
+              Apoie o desenvolvimento com um Pix de qualquer valor
+            </Link>
+            .
+          </p>
         </div>
       </section>
 
@@ -195,7 +239,15 @@ export default function WhatBitesBelowPage() {
             Um jogo de jvseki dev · Instagram{" "}
             <a href={game.instagram.url} target="_blank" rel="noopener noreferrer" className="wbb-link">
               {game.instagram.handle}
-            </a>
+            </a>{" "}
+            · Discord{" "}
+            <a href={game.discordUrl} target="_blank" rel="noopener noreferrer" className="wbb-link">
+              {game.discordUrl.replace("https://", "")}
+            </a>{" "}
+            ·{" "}
+            <Link href={game.supportPath} className="wbb-link">
+              Apoie
+            </Link>
           </p>
         </div>
       </section>

@@ -1,0 +1,753 @@
+/*
+  Paleta própria do What Bites Below — combina com o jogo, não com a
+  marca JVSEKI. Por isso fica escopada em .wbb e fora do theme.css: nada
+  aqui vaza pro resto do site.
+*/
+
+.wbb {
+  --wbb-bg: #0b1218;
+  --wbb-bg-raised: #111b23;
+  --wbb-text: #e8e2cf;
+  --wbb-accent: #ffc86b;
+  --wbb-mute: #8c8a7e;
+  --wbb-line: #8c8a7e;
+
+  background: var(--wbb-bg);
+  color: var(--wbb-text);
+}
+
+.wbb ::selection {
+  background: var(--wbb-accent);
+  color: var(--wbb-bg);
+}
+
+/* O grain do site por cima da pixel art borra os pixels — aqui some. */
+body:has(.wbb-page) .grain {
+  display: none;
+}
+
+/* Downloads só no computador. "PC" = ponteiro fino com hover (mouse/
+   trackpad), não largura de tela — tablet deitado continua sem download.
+   Resolvido em CSS, então o HTML do servidor já sai certo, sem flash. */
+.wbb-pc-only {
+  display: none !important;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .wbb-pc-only {
+    display: revert !important;
+  }
+  .wbb-pc-only.grid {
+    display: grid !important;
+  }
+  p.wbb-pc-only {
+    display: block !important;
+  }
+  .wbb-pc-only.wbb-btn {
+    display: inline-flex !important;
+  }
+  .wbb-mobile-only {
+    display: none;
+  }
+}
+
+.wbb-pixel {
+  image-rendering: pixelated;
+}
+
+.wbb-title,
+.wbb-h2,
+.wbb-badge,
+.wbb-btn,
+.wbb-play-btn,
+.wbb-dl__title,
+.wbb-dl__cta,
+.wbb-dl__ribbon,
+.wbb-amount,
+.wbb-chip {
+  font-family: var(--font-pixel), ui-monospace, monospace;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+.wbb-title {
+  line-height: 1.05;
+  color: var(--wbb-text);
+  text-shadow: 0 4px 0 #000;
+}
+
+.wbb-h2 {
+  font-size: clamp(1.25rem, 3vw, 1.75rem);
+  color: var(--wbb-accent);
+}
+
+.wbb-mute {
+  color: var(--wbb-mute);
+}
+
+.wbb-link {
+  color: var(--wbb-accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Topo */
+.wbb-hero {
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid color-mix(in srgb, var(--wbb-line) 40%, transparent);
+}
+
+.wbb-hero__bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* A thumbnail já tem título/"DEMO" desenhados no canto superior
+     esquerdo — ancorada embaixo à direita, o barco fica à vista e o
+     texto embutido cai atrás do degradê escuro (e do nosso título). */
+  object-position: 85% 100%;
+  filter: brightness(0.45);
+}
+
+.wbb-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg, var(--wbb-bg) 0%, rgba(11, 18, 24, 0.92) 38%, rgba(11, 18, 24, 0.15) 75%),
+    linear-gradient(0deg, var(--wbb-bg), transparent 40%),
+    linear-gradient(180deg, var(--wbb-bg), transparent 30%);
+}
+
+@media (max-width: 767px) {
+  .wbb-hero__bg {
+    object-position: 75% 100%;
+  }
+  .wbb-hero::after {
+    background: linear-gradient(180deg, var(--wbb-bg) 0%, rgba(11, 18, 24, 0.97) 62%, rgba(11, 18, 24, 0.5) 85%, var(--wbb-bg));
+  }
+}
+
+.wbb-hero .wrap {
+  z-index: 1;
+}
+
+.wbb-badge {
+  display: inline-block;
+  padding: 0.35rem 0.6rem 0.3rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--wbb-bg);
+  background: var(--wbb-accent);
+}
+
+/* Botões — cantos retos e sombra "dura", no espírito pixel art. */
+.wbb-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0.75rem 1.3rem;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  color: var(--wbb-text);
+  background: color-mix(in srgb, var(--wbb-bg) 70%, transparent);
+  border: 1px solid var(--wbb-line);
+  box-shadow: 4px 4px 0 #000;
+  transition: transform 0.12s steps(2), box-shadow 0.12s steps(2), color 0.12s, border-color 0.12s;
+}
+
+.wbb-btn:hover {
+  color: var(--wbb-accent);
+  border-color: var(--wbb-accent);
+}
+
+.wbb-btn:active {
+  transform: translate(4px, 4px);
+  box-shadow: 0 0 0 #000;
+}
+
+.wbb-btn--primary {
+  color: var(--wbb-bg);
+  background: var(--wbb-accent);
+  border-color: var(--wbb-accent);
+}
+
+.wbb-btn--primary:hover {
+  color: var(--wbb-bg);
+  background: #ffd68f;
+}
+
+/* Seções */
+.wbb-section {
+  padding-block: clamp(3.5rem, 7vw, 5.5rem);
+  border-bottom: 1px solid color-mix(in srgb, var(--wbb-line) 25%, transparent);
+}
+
+.wbb-credits {
+  padding-block: 2.5rem;
+  border-bottom: 0;
+}
+
+/* Moldura 16:9 do jogo e do trailer */
+.wbb-frame {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  background: #000;
+  border: 1px solid var(--wbb-line);
+}
+
+.wbb-play-cover {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  background: #000;
+}
+
+.wbb-play-cover img {
+  filter: brightness(0.6);
+  transition: filter 0.2s;
+}
+
+.wbb-play-cover:hover img,
+.wbb-play-cover:focus-visible img {
+  filter: brightness(0.8);
+}
+
+.wbb-play-btn {
+  position: relative;
+  padding: 1rem 1.8rem;
+  font-size: clamp(1rem, 2.4vw, 1.4rem);
+  text-transform: uppercase;
+  color: var(--wbb-bg);
+  background: var(--wbb-accent);
+  box-shadow: 5px 5px 0 #000;
+  transition: transform 0.12s steps(2);
+}
+
+.wbb-play-cover:hover .wbb-play-btn {
+  transform: translate(-2px, -2px);
+}
+
+/* Sobre */
+.wbb-features {
+  margin: 0;
+  padding: 1.25rem 1.5rem;
+  list-style: none;
+  background: var(--wbb-bg-raised);
+  border: 1px solid color-mix(in srgb, var(--wbb-line) 45%, transparent);
+}
+
+.wbb-features li {
+  position: relative;
+  padding: 0.55rem 0 0.55rem 1.4rem;
+}
+
+.wbb-features li + li {
+  border-top: 1px dashed color-mix(in srgb, var(--wbb-line) 35%, transparent);
+}
+
+.wbb-features li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  margin-top: -3px;
+  background: var(--wbb-accent);
+}
+
+/* Downloads — cartucho: ícone pixel, selos, corpo, barra de ação embaixo. */
+.wbb-dl {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 1.6rem 1.5rem 0;
+  overflow: hidden;
+  color: var(--wbb-text);
+  background:
+    radial-gradient(120% 60% at 0% 0%, color-mix(in srgb, var(--wbb-accent) 7%, transparent), transparent 60%),
+    var(--wbb-bg-raised);
+  border: 1px solid color-mix(in srgb, var(--wbb-line) 45%, transparent);
+  box-shadow: 6px 6px 0 #000;
+  transition: transform 0.12s steps(2), box-shadow 0.12s steps(2), border-color 0.15s;
+}
+
+a.wbb-dl:hover,
+a.wbb-dl:focus-visible {
+  border-color: var(--wbb-accent);
+  transform: translate(-3px, -3px);
+  box-shadow: 9px 9px 0 #000;
+}
+
+a.wbb-dl:active {
+  transform: translate(3px, 3px);
+  box-shadow: 3px 3px 0 #000;
+}
+
+.wbb-dl__icon {
+  display: grid;
+  place-items: center;
+  width: 68px;
+  height: 68px;
+  color: var(--wbb-accent);
+  background: var(--wbb-bg);
+  border: 1px solid color-mix(in srgb, var(--wbb-line) 45%, transparent);
+  box-shadow: inset 0 0 22px color-mix(in srgb, var(--wbb-accent) 14%, transparent);
+}
+
+a.wbb-dl:hover .wbb-dl__icon svg {
+  animation: wbb-bob 0.6s steps(2) infinite;
+}
+
+@keyframes wbb-bob {
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+.wbb-dl__title {
+  margin-top: 1.2rem;
+  font-size: 1.35rem;
+  color: var(--wbb-text);
+}
+
+.wbb-dl__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.7rem;
+}
+
+.wbb-dl__tags span {
+  padding: 0.15rem 0.45rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--wbb-mute);
+  border: 1px solid color-mix(in srgb, var(--wbb-line) 40%, transparent);
+}
+
+.wbb-dl__body {
+  display: block;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--wbb-mute);
+}
+
+.wbb-dl__body b {
+  font-weight: 600;
+  color: var(--wbb-text);
+}
+
+.wbb-dl__steps {
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: wbb-step;
+  font-size: 0.9rem;
+  color: var(--wbb-mute);
+}
+
+.wbb-dl__steps li {
+  counter-increment: wbb-step;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.25rem 0;
+}
+
+.wbb-dl__steps li::before {
+  content: counter(wbb-step);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 1.35rem;
+  height: 1.35rem;
+  font-family: var(--font-pixel), ui-monospace, monospace;
+  font-size: 0.7rem;
+  color: var(--wbb-bg);
+  background: var(--wbb-accent);
+}
+
+/* Barra de ação colada na base do card — o margin-top auto empurra pra
+   baixo, então os três cards alinham o botão na mesma linha. O espaço
+   mínimo acima dela vem do padding-bottom do item anterior. */
+.wbb-dl__cta {
+  display: block;
+  margin: auto -1.5rem 0;
+  padding: 0.95rem 1.5rem;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  color: var(--wbb-accent);
+  border-top: 1px solid color-mix(in srgb, var(--wbb-line) 35%, transparent);
+  transition: background 0.15s, color 0.15s;
+}
+
+.wbb-dl__body,
+.wbb-dl__steps {
+  padding-bottom: 1.5rem;
+}
+
+a.wbb-dl:hover .wbb-dl__cta {
+  color: var(--wbb-bg);
+  background: var(--wbb-accent);
+}
+
+.wbb-dl--featured {
+  border-color: color-mix(in srgb, var(--wbb-accent) 60%, transparent);
+}
+
+.wbb-dl--featured .wbb-dl__cta {
+  color: var(--wbb-bg);
+  background: var(--wbb-accent);
+}
+
+a.wbb-dl--featured:hover .wbb-dl__cta {
+  background: #ffd68f;
+}
+
+.wbb-dl__ribbon {
+  position: absolute;
+  top: 1.2rem;
+  right: 1.2rem;
+  padding: 0.3rem 0.5rem 0.25rem;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  color: var(--wbb-bg);
+  background: var(--wbb-accent);
+}
+
+.wbb-dl--soon {
+  box-shadow: none;
+  border-style: dashed;
+}
+
+.wbb-dl--soon .wbb-dl__icon,
+.wbb-dl--soon .wbb-dl__title {
+  color: var(--wbb-mute);
+}
+
+.wbb-dl--soon .wbb-dl__icon {
+  box-shadow: none;
+}
+
+.wbb-dl--soon .wbb-dl__ribbon {
+  color: var(--wbb-text);
+  background: color-mix(in srgb, var(--wbb-line) 35%, transparent);
+}
+
+.wbb-dl--soon .wbb-dl__cta {
+  color: var(--wbb-mute);
+}
+
+/* /apoie — doação por Pix */
+.wbb-panel {
+  padding: clamp(1.25rem, 3vw, 2rem);
+  background: var(--wbb-bg-raised);
+  border: 1px solid color-mix(in srgb, var(--wbb-line) 45%, transparent);
+  box-shadow: 6px 6px 0 #000;
+}
+
+.wbb-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--wbb-mute);
+}
+
+.wbb-amount {
+  min-width: 6.5ch;
+  font-size: clamp(1.6rem, 4vw, 2.2rem);
+  line-height: 1;
+  text-align: right;
+  color: var(--wbb-accent);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Barrinha: trilho escuro, parte preenchida e bolinha em #ffc86b.
+   --fill (0–100%) vem do componente. */
+.wbb-range {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 28px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.wbb-range:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.wbb-range::-webkit-slider-runnable-track {
+  height: 10px;
+  background: linear-gradient(90deg, var(--wbb-accent) var(--fill, 0%), #05090c var(--fill, 0%));
+  border: 1px solid color-mix(in srgb, var(--wbb-line) 55%, transparent);
+}
+
+.wbb-range::-moz-range-track {
+  height: 10px;
+  background: #05090c;
+  border: 1px solid color-mix(in srgb, var(--wbb-line) 55%, transparent);
+}
+
+.wbb-range::-moz-range-progress {
+  height: 10px;
+  background: var(--wbb-accent);
+}
+
+.wbb-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 26px;
+  height: 26px;
+  margin-top: -9px;
+  border-radius: 9999px;
+  background: var(--wbb-accent);
+  border: 3px solid var(--wbb-bg);
+  box-shadow: 0 0 0 1px var(--wbb-accent), 0 0 18px color-mix(in srgb, var(--wbb-accent) 55%, transparent);
+  transition: transform 0.12s;
+}
+
+.wbb-range::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 9999px;
+  background: var(--wbb-accent);
+  border: 3px solid var(--wbb-bg);
+  box-shadow: 0 0 0 1px var(--wbb-accent), 0 0 18px color-mix(in srgb, var(--wbb-accent) 55%, transparent);
+}
+
+.wbb-range:active::-webkit-slider-thumb {
+  transform: scale(1.15);
+}
+
+.wbb-range:focus-visible {
+  outline: 2px solid var(--wbb-accent);
+  outline-offset: 4px;
+}
+
+.wbb-chip {
+  min-height: 40px;
+  padding: 0.45rem 0.85rem;
+  font-size: 0.8rem;
+  color: var(--wbb-text);
+  background: var(--wbb-bg);
+  border: 1px solid color-mix(in srgb, var(--wbb-line) 55%, transparent);
+  box-shadow: 3px 3px 0 #000;
+  transition: transform 0.12s steps(2), box-shadow 0.12s steps(2), color 0.12s, border-color 0.12s;
+}
+
+.wbb-chip:hover:not(:disabled) {
+  color: var(--wbb-accent);
+  border-color: var(--wbb-accent);
+}
+
+.wbb-chip:active:not(:disabled) {
+  transform: translate(3px, 3px);
+  box-shadow: 0 0 0 #000;
+}
+
+.wbb-chip[aria-pressed="true"] {
+  color: var(--wbb-bg);
+  background: var(--wbb-accent);
+  border-color: var(--wbb-accent);
+}
+
+.wbb-chip:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.wbb-input {
+  display: block;
+  width: 100%;
+  min-height: 48px;
+  padding: 0.7rem 0.85rem;
+  font-size: 1rem;
+  color: var(--wbb-text);
+  background: var(--wbb-bg);
+  border: 1px solid color-mix(in srgb, var(--wbb-line) 55%, transparent);
+  border-radius: 0;
+}
+
+.wbb-input::placeholder {
+  color: color-mix(in srgb, var(--wbb-mute) 70%, transparent);
+}
+
+.wbb-input:focus {
+  outline: none;
+  border-color: var(--wbb-accent);
+  box-shadow: 0 0 0 1px var(--wbb-accent);
+}
+
+.wbb-input:disabled {
+  opacity: 0.6;
+}
+
+.wbb-btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.wbb-error {
+  padding: 0.7rem 0.85rem;
+  font-size: 0.92rem;
+  color: #ffb4a8;
+  background: color-mix(in srgb, #ff6b57 12%, transparent);
+  border: 1px solid color-mix(in srgb, #ff6b57 45%, transparent);
+}
+
+.wbb-pix-result {
+  min-height: 100%;
+}
+
+/* QR grande, com moldura branca (leitores de QR precisam da margem clara). */
+.wbb-qr {
+  display: block;
+  width: min(100%, 320px);
+  height: auto;
+  padding: 12px;
+  background: #fff;
+  image-rendering: pixelated;
+  box-shadow: 6px 6px 0 #000;
+}
+
+.wbb-waiting {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  color: var(--wbb-accent);
+}
+
+.wbb-waiting__dot {
+  width: 8px;
+  height: 8px;
+  background: var(--wbb-accent);
+  animation: wbb-blink 1s steps(2) infinite;
+}
+
+@keyframes wbb-blink {
+  50% {
+    opacity: 0.15;
+  }
+}
+
+.wbb-paid {
+  font-size: 3.5rem;
+  line-height: 1;
+  color: var(--wbb-accent);
+  animation: wbb-pop 0.5s steps(4);
+}
+
+@keyframes wbb-pop {
+  0% {
+    transform: scale(0.4);
+  }
+  60% {
+    transform: scale(1.25);
+  }
+}
+
+/* Controles */
+.wbb-table {
+  width: 100%;
+  max-width: 640px;
+  border-collapse: collapse;
+  font-size: 0.98rem;
+}
+
+.wbb-table th {
+  padding: 0 0 0.6rem;
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--wbb-mute);
+}
+
+.wbb-table td {
+  padding: 0.65rem 0;
+  border-top: 1px solid color-mix(in srgb, var(--wbb-line) 25%, transparent);
+}
+
+.wbb-table td:first-child {
+  width: 45%;
+  padding-right: 1rem;
+}
+
+.wbb-table kbd {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  font-family: var(--font-pixel), ui-monospace, monospace;
+  font-size: 0.8rem;
+  color: var(--wbb-text);
+  background: var(--wbb-bg-raised);
+  border: 1px solid var(--wbb-line);
+  box-shadow: 0 2px 0 #000;
+}
+
+.wbb :focus-visible {
+  outline: 2px solid var(--wbb-accent);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wbb-btn,
+  .wbb-dl,
+  .wbb-chip,
+  .wbb-play-btn {
+    transition: none;
+  }
+  .wbb-dl__icon svg,
+  .wbb-waiting__dot,
+  .wbb-paid {
+    animation: none !important;
+  }
+}
+
+/* Destaque do jogo na home — "cartucho" com a paleta do jogo dentro do
+   site preto+cromo. Thumbnail bem escurecida atrás, ancorada à direita. */
+.wbb-featured {
+  position: relative;
+  overflow: hidden;
+  border-block: 1px solid color-mix(in srgb, var(--wbb-accent) 35%, transparent);
+}
+
+.wbb-featured__bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 85% 100%;
+  filter: brightness(0.3) saturate(0.9);
+}
+
+.wbb-featured::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  /* O texto desenhado na thumbnail fica no canto superior esquerdo:
+     esse lado é quase sólido, e só a direita (barco) aparece. */
+  background: linear-gradient(90deg, var(--wbb-bg) 0%, rgba(11, 18, 24, 0.97) 45%, rgba(11, 18, 24, 0.6) 80%),
+    linear-gradient(180deg, var(--wbb-bg), transparent 35%);
+}
+
+.wbb-featured .wrap {
+  z-index: 1;
+}

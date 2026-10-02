@@ -3,6 +3,7 @@ import Image from "next/image";
 import dynamic from "next/dynamic";
 import { Button } from "@/components/Button";
 import { CapabilityCard } from "@/components/CapabilityCard";
+import { FeaturedGame } from "@/components/game/FeaturedGame";
 import { HeroBackdrop } from "@/components/fx/HeroBackdrop";
 import { Marquee } from "@/components/fx/Marquee";
 import { ScrambleText } from "@/components/fx/ScrambleText";
@@ -12,7 +13,8 @@ import { StepsTimeline } from "@/components/fx/StepsTimeline";
 import { SectionHeading } from "@/components/SectionHeading";
 import { Reveal } from "@/components/Reveal";
 import { capabilities, howWeWork, skills, timelines } from "@/lib/content";
-import { site, waLink, waMessages } from "@/lib/site";
+import { whatBitesBelow } from "@/lib/games";
+import { waLink, waMessages } from "@/lib/site";
 
 // three.js + fiber + drei são pesados demais pra ir no bundle inicial —
 // carrega só no cliente, sob demanda. Nunca roda no servidor (WebGL não
@@ -43,10 +45,15 @@ export default function HomePage() {
         <div className="wrap relative grid gap-10 py-14 md:min-h-[calc(100svh-72px)] md:grid-cols-2 md:items-center md:gap-12 md:py-24">
           <div>
             <Reveal transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}>
-              <p className="status-pill">
+              {/* Chamada pro jogo logo no topo — o "Atendimento remoto ·
+                  Brasil" que ficava aqui continua no botão do header. */}
+              <Link href={whatBitesBelow.path} className="status-pill status-pill--game">
                 <span className="status-dot" aria-hidden="true" />
-                {site.serviceArea}
-              </p>
+                <span>
+                  <span className="text-ink">Novo:</span> {whatBitesBelow.name} — jogue grátis
+                </span>
+                <span aria-hidden="true">→</span>
+              </Link>
             </Reveal>
             <h1 className="type-display mt-6 max-w-[16ch] text-[clamp(2.1rem,8vw,3.75rem)] leading-[1.08]">
               <SplitWords text="Sistemas sob medida," delay={0.1} />{" "}
@@ -89,6 +96,9 @@ export default function HomePage() {
           <span className="scroll-cue" />
         </div>
       </section>
+
+      {/* Destaque do jogo — primeira coisa depois do hero */}
+      <FeaturedGame />
 
       {/* Faixa da stack */}
       <section className="border-t border-stroke py-8 md:py-10">

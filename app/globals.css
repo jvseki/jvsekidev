@@ -354,6 +354,23 @@
     color: var(--text-mute);
   }
 
+  /* Variante que chama pro jogo: o ponto pulsa na cor do lampião do
+     What Bites Below — a única cor fora do preto+cromo na home, e só
+     aqui, de propósito, pra puxar o olho. */
+  .status-pill--game {
+    transition: border-color var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard);
+  }
+
+  .status-pill--game:hover {
+    color: var(--text);
+    border-color: var(--text-mute);
+  }
+
+  .status-pill--game .status-dot,
+  .status-pill--game .status-dot::after {
+    background: #ffc86b;
+  }
+
   .status-dot {
     position: relative;
     width: 7px;
