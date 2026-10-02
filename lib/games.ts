@@ -1,8 +1,7 @@
 // Dados do jogo What Bites Below. Os arquivos em /public/jogos/what-bites-below
 // vêm prontos do `npm run site:pack` do projeto do jogo — em nova versão,
 // substitui a pasta inteira e atualiza `version` aqui (o nome do .zip
-// offline depende dela). O trailer fica FORA dessa pasta (public/video/)
-// de propósito, pra não sumir quando a pasta for substituída.
+// offline depende dela). O trailer é o do YouTube (trailerYouTubeId).
 
 const base = "/jogos/what-bites-below";
 const version = "0.3.2";
@@ -14,7 +13,7 @@ export const whatBitesBelow = {
   version,
   tagline: "Pescaria aconchegante. Até não ser mais.",
   playSrc: `${base}/jogar/index.html`,
-  trailerSrc: "/video/what-bites-below-trailer-pt.mp4",
+  trailerYouTubeId: "9Fwo7o8DF7M",
   img: {
     cover: `${base}/img/capa-itch-630x500-pt.png`,
     thumbnail: `${base}/img/thumbnail-1920x1080-pt.png`,
@@ -26,6 +25,8 @@ export const whatBitesBelow = {
   windowsZipUrl: null as string | null,
   itchUrl: null as string | null,
   instagram: { handle: "@jvsekidev", url: "https://instagram.com/jvsekidev" },
+  discordUrl: "https://discord.gg/HV8qAP3YqK",
+  supportPath: "/apoie",
   about:
     "Seu avô Walter pescou neste lago por quarenta anos. Há um mês, o barco dele voltou sozinho para o cais — com o lampião ainda aceso. Agora o barco é seu. Pesque à noite, venda para a Marta no cais, compre linhas mais longas e desça mais fundo… e repare no que muda.",
   features: [
