@@ -64,6 +64,34 @@ export const howWeWork: HowWeWorkStep[] = [
   },
 ];
 
+/** "Como eu penso" — cada ideia apontando pra um projeto real que a prova. */
+export const principles = [
+  {
+    n: "01",
+    title: "Começo pelo problema, não pela tecnologia.",
+    body: "Antes de falar em framework, pergunto o que trava o seu dia. A Seklyn nasceu de uma pergunta só — “o aluno fez o treino?” — e todo o produto existe pra responder isso.",
+    proof: { label: "Ver como a Seklyn responde", href: "/seklyn" },
+  },
+  {
+    n: "02",
+    title: "Fricção zero pra quem usa.",
+    body: "Se o seu cliente precisa criar conta, decorar senha ou instalar app, ele desiste. Por isso faço link sem senha, pedido pronto no WhatsApp e conteúdo que o próprio cliente atualiza pela planilha.",
+    proof: { label: "Ver os projetos", href: "/projetos" },
+  },
+  {
+    n: "03",
+    title: "Do banco ao deploy — e depois dele.",
+    body: "Não entrego um zip e sumo. Modelo o banco, escrevo a API, faço as telas, configuro servidor e domínio, coloco no ar e continuo mantendo. Um responsável só, do começo ao fim.",
+    proof: { label: "Como eu trabalho", href: "/#como-trabalho" },
+  },
+  {
+    n: "04",
+    title: "Produto próprio é o meu laboratório.",
+    body: "Construo coisas minhas — um SaaS em produção e um jogo — pra testar em mim o que ofereço pra você: pagamento, assinatura, performance, mobile. Quando chega no seu projeto, já foi validado.",
+    proof: { label: "Conhecer a Seklyn", href: "/seklyn" },
+  },
+];
+
 export const timelines = [
   { label: "Projetos simples", value: "1–2 semanas" },
   { label: "Sistemas completos", value: "2–4 semanas" },
@@ -137,8 +165,8 @@ export const cases: CaseStudy[] = [
     description:
       "Plataforma SaaS multi-tenant de acompanhamento de treinos para personal trainers. Cada personal tem painel administrativo isolado com assinatura mensal: cadastro de alunos, montagem de treinos semanais, acompanhamento de execução e relatórios de adesão. O aluno acessa por link exclusivo, sem senha, em interface mobile-first. Desenvolvido individualmente do banco ao deploy em VPS.",
     stack: ["FastAPI", "PostgreSQL", "SQLAlchemy", "HTML/CSS/JS"],
-    href: "https://seklyn.com.br",
-    linkLabel: "Ver site",
+    href: "/seklyn",
+    linkLabel: "Ver o case com vídeos",
   },
 ];
 

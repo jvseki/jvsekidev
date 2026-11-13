@@ -7,6 +7,10 @@ import { Reveal } from "@/components/Reveal";
 import { cases, labReserva } from "@/lib/content";
 import { whatBitesBelow } from "@/lib/games";
 import { pageMetadata } from "@/lib/seo";
+import { AutoVideo } from "@/components/fx/AutoVideo";
+import { interFont } from "@/lib/fonts";
+import { seklyn } from "@/lib/seklyn";
+import "@/styles/seklyn.css";
 
 export const metadata = pageMetadata({
   title: "Projetos",
@@ -36,6 +40,32 @@ export default function ProjetosPage() {
             </Reveal>
           ))}
         </div>
+
+        {/* Seklyn — produto próprio, com o vídeo de apresentação */}
+        <Reveal className="mt-6">
+          <Link
+            href={seklyn.path}
+            className={`sk sk-card group grid grid-cols-1 overflow-hidden sm:grid-cols-[minmax(0,1.1fr)_1fr] ${interFont.variable}`}
+          >
+            <AutoVideo
+              src={seklyn.video.promo.src}
+              poster={seklyn.video.promo.poster}
+              label="Vídeo de apresentação da Seklyn"
+              className="aspect-video h-full w-full object-cover"
+            />
+            <div className="flex flex-col justify-center p-6 md:p-8">
+              <p className="sk-eyebrow">Meu SaaS · em produção</p>
+              <h2 className="sk-title mt-2 text-[1.6rem]">
+                Seklyn <span className="sk-grad">— treino acompanhado de verdade</span>
+              </h2>
+              <p className="sk-mute mt-3 max-w-[48ch] text-[0.97rem] leading-relaxed">
+                Ficha de treino digital, aluno marcando série por série por link sem senha e analytics de aderência
+                pro personal. Veja o case completo, com vídeos e as decisões por trás.
+              </p>
+              <span className="sk-link mt-5 inline-flex text-sm font-semibold">Ver o case →</span>
+            </div>
+          </Link>
+        </Reveal>
 
         {/* Jogos — card com a capa pixel art levando pra página do jogo */}
         <Reveal className="mt-6">

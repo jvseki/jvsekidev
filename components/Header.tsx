@@ -12,6 +12,7 @@ const NAV = [
   { href: "/", label: "Início" },
   { href: "/sobre", label: "Sobre mim" },
   { href: "/projetos", label: "Projetos" },
+  { href: "/seklyn", label: "Seklyn" },
   { href: "/contato", label: "Contato" },
   { href: "/apoie", label: "Apoie" },
 ] as const;
@@ -91,10 +92,14 @@ export function Header() {
                 href={item.href}
                 onClick={() => setOpen(false)}
                 aria-current={active ? "page" : undefined}
-                className={`rounded-md px-3 py-2.5 text-[0.92rem] font-medium transition-colors md:py-2 ${
+                className={`inline-flex items-center gap-2 rounded-md px-3 py-2.5 text-[0.92rem] font-medium transition-colors md:py-2 ${
                   active ? "text-ink" : "text-mute hover:text-ink"
                 }`}
               >
+                {/* a Seklyn é o produto em destaque — pontinho na cor dela */}
+                {item.href === "/seklyn" ? (
+                  <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full" style={{ background: "#8b5cf6", boxShadow: "0 0 10px #8b5cf6" }} />
+                ) : null}
                 {item.label}
               </Link>
             );
@@ -104,7 +109,7 @@ export function Header() {
             href={waLink(waMessages.generic)}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-2 md:ml-2 md:mt-0"
+            className="mt-2 md:ml-2 md:mt-0 md:hidden lg:inline-flex"
           >
             {site.serviceArea}
           </Button>

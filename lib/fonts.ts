@@ -1,4 +1,8 @@
-import { Silkscreen } from "next/font/google";
+import { Inter, Silkscreen } from "next/font/google";
+
+// Fonte da Seklyn — a mesma do produto. Só a área da Seklyn (página
+// /seklyn e o destaque na home) aplica a variável.
+export const interFont = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 
 // Fonte pixel das páginas do jogo (/jogos/what-bites-below e /apoie) —
 // importada só por elas, não pelo layout, pra não pesar no resto do site.

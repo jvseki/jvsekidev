@@ -23,8 +23,7 @@ export function CaseCard({ n, name, kind, description, stack, href, linkLabel }:
 
       <a
         href={href}
-        target="_blank"
-        rel="noopener noreferrer"
+        {...(href.startsWith("/") ? {} : { target: "_blank", rel: "noopener noreferrer" })}
         className="relative z-10 mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-ink underline decoration-stroke underline-offset-4 transition-colors hover:decoration-ink"
       >
         {linkLabel} →

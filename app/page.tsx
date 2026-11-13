@@ -12,7 +12,9 @@ import { SplitWords } from "@/components/fx/SplitWords";
 import { StepsTimeline } from "@/components/fx/StepsTimeline";
 import { SectionHeading } from "@/components/SectionHeading";
 import { Reveal } from "@/components/Reveal";
-import { capabilities, howWeWork, skills, timelines } from "@/lib/content";
+import { StackCards } from "@/components/fx/StackCards";
+import { FeaturedSeklyn } from "@/components/seklyn/FeaturedSeklyn";
+import { capabilities, howWeWork, principles, skills, timelines } from "@/lib/content";
 import { whatBitesBelow } from "@/lib/games";
 import { waLink, waMessages } from "@/lib/site";
 
@@ -47,13 +49,22 @@ export default function HomePage() {
             <Reveal transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}>
               {/* Chamada pro jogo logo no topo — o "Atendimento remoto ·
                   Brasil" que ficava aqui continua no botão do header. */}
-              <Link href={whatBitesBelow.path} className="status-pill status-pill--game">
-                <span className="status-dot" aria-hidden="true" />
-                <span>
-                  <span className="text-ink">Novo:</span> {whatBitesBelow.name} — jogue grátis
-                </span>
-                <span aria-hidden="true">→</span>
-              </Link>
+              <div className="flex flex-wrap gap-2">
+                <Link href="/seklyn" className="status-pill">
+                  <span className="status-dot" aria-hidden="true" style={{ background: "#8b5cf6" }} />
+                  <span>
+                    <span className="text-ink">Seklyn:</span> meu SaaS pra personal
+                  </span>
+                  <span aria-hidden="true">→</span>
+                </Link>
+                <Link href={whatBitesBelow.path} className="status-pill status-pill--game">
+                  <span className="status-dot" aria-hidden="true" />
+                  <span>
+                    <span className="text-ink">Novo:</span> {whatBitesBelow.name}
+                  </span>
+                  <span aria-hidden="true">→</span>
+                </Link>
+              </div>
             </Reveal>
             <h1 className="type-display mt-6 max-w-[16ch] text-[clamp(2.1rem,8vw,3.75rem)] leading-[1.08]">
               <SplitWords text="Sistemas sob medida," delay={0.1} />{" "}
@@ -97,13 +108,41 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Destaque do jogo — primeira coisa depois do hero */}
-      <FeaturedGame />
-
       {/* Faixa da stack */}
       <section className="border-t border-stroke py-8 md:py-10">
         <Marquee items={skills} />
       </section>
+
+      {/* Manifesto curto — acende palavra por palavra com a rolagem */}
+      <section className="border-t border-stroke py-[var(--space-section)]">
+        <div className="wrap">
+          <p className="eyebrow flex items-center gap-3">
+            <span className="h-px w-6 bg-mute" aria-hidden="true" />
+            <ScrambleText text="O que eu faço, em uma frase" />
+          </p>
+          <ScrollRevealText
+            as="p"
+            text="Eu pego um problema real do seu negócio e transformo em um sistema que funciona no primeiro dia — com banco, API, telas, servidor e manutenção nas mãos de uma pessoa só."
+            className="type-display mt-6 max-w-[24ch] text-[clamp(1.8rem,4.6vw,3.6rem)] leading-[1.1]"
+          />
+        </div>
+      </section>
+
+      {/* Produto próprio em destaque: Seklyn (vídeo Remotion) */}
+      <FeaturedSeklyn />
+
+      {/* COMO EU PENSO — cards empilhando com a rolagem */}
+      <section className="border-t border-stroke pt-[var(--space-section)] pb-[var(--space-section-sm)]">
+        <div className="wrap">
+          <Reveal>
+            <SectionHeading eyebrow="Como eu penso" title="Quatro ideias que guiam tudo o que eu construo." />
+          </Reveal>
+          <StackCards items={principles} />
+        </div>
+      </section>
+
+      {/* Jogo — o outro produto próprio */}
+      <FeaturedGame />
 
       {/* 02 · O QUE EU CONSTRUO */}
       <section className="border-t border-stroke py-[var(--space-section)]">
@@ -134,7 +173,7 @@ export default function HomePage() {
       </section>
 
       {/* 04 · COMO TRABALHO */}
-      <section className="border-t border-stroke py-[var(--space-section)]">
+      <section id="como-trabalho" className="scroll-mt-20 border-t border-stroke py-[var(--space-section)]">
         <div className="wrap">
           <Reveal>
             <SectionHeading eyebrow="Como trabalho" title="Do primeiro contato à manutenção contínua." />

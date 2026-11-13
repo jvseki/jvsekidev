@@ -1,0 +1,306 @@
+/*
+  Paleta da Seklyn — o roxo pertence a ela, não à JVSEKI (ver theme.css).
+  Tudo escopado em .sk: aparece na página /seklyn e no destaque da home,
+  como um "produto dentro do portfólio", sem vazar pro resto do site.
+*/
+
+.sk {
+  --sk-bg: #07040f;
+  --sk-panel: #100a1f;
+  --sk-panel-2: #160e2b;
+  --sk-line: rgba(167, 139, 250, 0.14);
+  --sk-line-strong: rgba(167, 139, 250, 0.32);
+  --sk-text: #f5f3ff;
+  --sk-mute: #a39cbd;
+  --sk-v300: #c4b5fd;
+  --sk-v400: #a78bfa;
+  --sk-v500: #8b5cf6;
+  --sk-v600: #7c3aed;
+  --sk-v700: #6d28d9;
+  --sk-v900: #4c1d95;
+  --sk-green: #10b981;
+
+  position: relative;
+  background: var(--sk-bg);
+  color: var(--sk-text);
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+.sk ::selection {
+  background: var(--sk-v600);
+  color: #fff;
+}
+
+/* ---------- fundo: blobs violeta respirando ---------- */
+.sk-blobs {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.sk-blobs::before,
+.sk-blobs::after,
+.sk-blobs > span {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.45;
+  animation: sk-blob 22s ease-in-out infinite alternate;
+}
+.sk-blobs::before {
+  width: min(60vw, 640px);
+  height: min(60vw, 640px);
+  left: -12%;
+  top: -10%;
+  background: radial-gradient(circle, var(--sk-v500), transparent 65%);
+}
+.sk-blobs::after {
+  width: min(70vw, 720px);
+  height: min(70vw, 720px);
+  right: -18%;
+  top: 10%;
+  background: radial-gradient(circle, var(--sk-v900), transparent 65%);
+  animation-delay: -8s;
+}
+.sk-blobs > span {
+  width: min(55vw, 560px);
+  height: min(55vw, 560px);
+  left: 30%;
+  bottom: -30%;
+  background: radial-gradient(circle, var(--sk-v400), transparent 65%);
+  opacity: 0.25;
+  animation-delay: -14s;
+}
+@keyframes sk-blob {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(4%, 6%, 0) scale(1.08);
+  }
+  100% {
+    transform: translate3d(-5%, -3%, 0) scale(0.95);
+  }
+}
+
+.sk-dots {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(rgba(196, 181, 253, 0.12) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: radial-gradient(ellipse at 50% 40%, black 20%, transparent 75%);
+}
+
+/* ---------- tipografia ---------- */
+.sk-title {
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  line-height: 1.02;
+}
+.sk-h2 {
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+  font-size: clamp(1.9rem, 4.6vw, 3.4rem);
+}
+.sk-grad {
+  background: linear-gradient(100deg, var(--sk-v300), var(--sk-v500) 60%, var(--sk-v400));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.sk-mute {
+  color: var(--sk-mute);
+}
+.sk-eyebrow {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--sk-v400);
+}
+
+/* ---------- peças ---------- */
+.sk-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  border-radius: 999px;
+  padding: 0.4rem 0.95rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--sk-v300);
+  background: rgba(124, 58, 237, 0.14);
+  border: 1px solid var(--sk-line-strong);
+}
+.sk-badge__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--sk-green);
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.18);
+}
+
+.sk-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 50px;
+  padding: 0.75rem 1.5rem;
+  border-radius: 14px;
+  font-weight: 600;
+  font-size: 0.97rem;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  color: var(--sk-text);
+  border: 1px solid var(--sk-line-strong);
+  background: rgba(255, 255, 255, 0.03);
+  transition: transform 0.2s var(--ease-standard), background 0.2s, border-color 0.2s, box-shadow 0.3s;
+}
+.sk-btn:hover {
+  border-color: var(--sk-v400);
+  background: rgba(124, 58, 237, 0.12);
+}
+.sk-btn:active {
+  transform: scale(0.98);
+}
+.sk-btn--primary {
+  overflow: hidden;
+  border-color: transparent;
+  background: var(--sk-v600);
+  box-shadow: 0 10px 30px rgba(124, 58, 237, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+.sk-btn--primary:hover {
+  background: var(--sk-v700);
+  box-shadow: 0 14px 40px rgba(124, 58, 237, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+.sk-btn--primary::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.3) 50%, transparent 65%);
+  transform: translateX(-120%);
+}
+.sk-btn--primary:hover::after {
+  transform: translateX(120%);
+  transition: transform 0.9s var(--ease-standard);
+}
+
+.sk-card {
+  position: relative;
+  border-radius: 22px;
+  border: 1px solid var(--sk-line);
+  background: linear-gradient(180deg, rgba(22, 14, 43, 0.85), rgba(16, 10, 31, 0.85));
+  transition: border-color 0.3s, transform 0.3s var(--ease-standard);
+}
+.sk-card:hover {
+  border-color: var(--sk-line-strong);
+}
+/* brilho que segue o ponteiro (--mx/--my setados via JS) */
+.sk-card--glow::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+  background: radial-gradient(360px circle at var(--mx, 50%) var(--my, 50%), rgba(139, 92, 246, 0.16), transparent 60%);
+}
+.sk-card--glow:hover::before {
+  opacity: 1;
+}
+
+.sk-icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  color: var(--sk-v300);
+  background: rgba(124, 58, 237, 0.16);
+  border: 1px solid var(--sk-line-strong);
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.sk-chip {
+  display: inline-flex;
+  border-radius: 999px;
+  padding: 0.38rem 0.85rem;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--sk-v300);
+  border: 1px solid var(--sk-line);
+  background: rgba(124, 58, 237, 0.08);
+}
+
+/* moldura dos vídeos */
+.sk-frame {
+  position: relative;
+  overflow: hidden;
+  border-radius: 24px;
+  border: 1px solid var(--sk-line-strong);
+  background: var(--sk-panel);
+  box-shadow: 0 40px 120px -20px rgba(76, 29, 149, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+}
+.sk-frame video,
+.sk-frame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sk-link {
+  color: var(--sk-v300);
+  text-decoration: underline;
+  text-decoration-color: var(--sk-line-strong);
+  text-underline-offset: 4px;
+  transition: text-decoration-color 0.2s;
+}
+.sk-link:hover {
+  text-decoration-color: var(--sk-v300);
+}
+
+.sk-section {
+  position: relative;
+  padding-block: clamp(4.5rem, 10vw, 8rem);
+  border-top: 1px solid var(--sk-line);
+}
+
+/* faixa de rolagem horizontal no mobile (decisões) */
+.sk-snap {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  padding-inline: 1rem;
+  margin-inline: -1rem;
+  -webkit-overflow-scrolling: touch;
+}
+.sk-snap::-webkit-scrollbar {
+  display: none;
+}
+.sk-snap > * {
+  scroll-snap-align: center;
+  flex: 0 0 84%;
+}
+
+/* grain do site por cima do roxo deixa tudo acinzentado — aqui some */
+body:has(.sk-page) .grain {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sk-blobs::before,
+  .sk-blobs::after,
+  .sk-blobs > span {
+    animation: none;
+  }
+}

@@ -10,7 +10,8 @@
     "remotion:studio": "remotion studio remotion/index.ts",
     "render:logo": "npm run render:logo:webm && npm run render:logo:mp4",
     "render:logo:webm": "remotion render remotion/index.ts LogoLoop public/video/logo-loop.webm --codec=vp8",
-    "render:logo:mp4": "remotion render remotion/index.ts LogoLoop public/video/logo-loop.mp4 --codec=h264"
+    "render:logo:mp4": "remotion render remotion/index.ts LogoLoop public/video/logo-loop.mp4 --codec=h264",
+    "render:seklyn": "node scripts/render-seklyn.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^9.122.0",
@@ -26,6 +27,7 @@
   },
   "devDependencies": {
     "@remotion/cli": "^4.0.517",
+    "@remotion/google-fonts": "^4.0.517",
     "@remotion/player": "^4.0.517",
     "@remotion/three": "^4.0.517",
     "@types/node": "^20.14.0",
