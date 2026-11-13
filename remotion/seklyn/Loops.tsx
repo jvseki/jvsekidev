@@ -17,7 +17,7 @@ function LoopShell({ children }: { children: React.ReactNode }) {
   const fade = prog(frame, 0, 10) * (1 - prog(frame, durationInFrames - 14, durationInFrames - 1));
   return (
     <AbsoluteFill>
-      <Backdrop intensity={0.8} />
+      <Backdrop floor={0.5} glowX={0.5} />
       <AbsoluteFill style={{ alignItems: "center", justifyContent: "center", opacity: fade }}>{children}</AbsoluteFill>
     </AbsoluteFill>
   );

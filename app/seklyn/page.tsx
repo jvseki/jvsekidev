@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import { AutoVideo } from "@/components/fx/AutoVideo";
 import { ScrollRevealText } from "@/components/fx/ScrollRevealText";
 import { ScrollTiltFrame } from "@/components/fx/ScrollTiltFrame";
@@ -8,6 +7,7 @@ import { Reveal } from "@/components/Reveal";
 import { GlowCard } from "@/components/seklyn/GlowCard";
 import { HorizontalDecisions } from "@/components/seklyn/HorizontalDecisions";
 import { SeklynSteps } from "@/components/seklyn/SeklynSteps";
+import { SeklynBrand } from "@/components/seklyn/SeklynBrand";
 import { interFont } from "@/lib/fonts";
 import { seklyn, seklynDecisions, seklynFeatures, seklynStack, seklynSteps } from "@/lib/seklyn";
 import { pageMetadata } from "@/lib/seo";
@@ -32,18 +32,15 @@ const waSeklyn = waLink("Olá João, vi a Seklyn no seu site e quero conversar s
 
 export default function SeklynPage() {
   return (
-    <div className={`sk sk-page -mt-[72px] overflow-x-clip pt-[72px] ${interFont.variable}`}>
-      {/* 1 · HERO */}
+    <div className={`sk sk-page overflow-x-clip ${interFont.variable}`}>
+      {/* 1 · HERO — mesmo fundo do seklyn.com.br (brilho + piso quadriculado) */}
       <section className="relative overflow-hidden">
-        <div className="sk-blobs" aria-hidden="true">
-          <span />
-        </div>
-        <div className="sk-dots" aria-hidden="true" />
+        <div className="sk-hero-bg" aria-hidden="true" />
         <div className="wrap relative grid items-center gap-12 py-14 md:py-20 lg:min-h-[calc(100svh-72px)] lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:gap-14">
           <div>
             <Reveal>
-              <div className="flex flex-wrap items-center gap-3">
-                <Image src={seklyn.logo} alt="" width={44} height={44} priority />
+              <div className="flex flex-wrap items-center gap-4">
+                <SeklynBrand size={44} priority />
                 <span className="sk-badge">
                   <span className="sk-badge__dot" aria-hidden="true" />
                   Meu produto · SaaS no ar
@@ -55,7 +52,7 @@ export default function SeklynPage() {
               <SplitWords text="de verdade." delay={0.3} whole innerClassName="sk-grad" />
             </h1>
             <Reveal delay={0.45}>
-              <p className="sk-mute mt-6 max-w-[44ch] text-[1.1rem] leading-relaxed">{seklyn.pitch}</p>
+              <p className="sk-body mt-6 max-w-[44ch] text-[1.1rem] font-medium leading-relaxed">{seklyn.pitch}</p>
               <div className="mt-9 flex flex-col gap-3 sm:flex-row">
                 <a href={seklyn.url} target="_blank" rel="noopener noreferrer" className="sk-btn sk-btn--primary">
                   Conhecer a Seklyn ↗
@@ -66,7 +63,7 @@ export default function SeklynPage() {
               </div>
               <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-[0.92rem]">
                 {["Link sem senha", "Série por série", "Na cor da sua marca"].map((t) => (
-                  <li key={t} className="flex items-center gap-2">
+                  <li key={t} className="sk-body flex items-center gap-2 font-medium">
                     <span className="text-[color:var(--sk-green)]" aria-hidden="true">
                       ✓
                     </span>
@@ -117,7 +114,7 @@ export default function SeklynPage() {
       </section>
 
       {/* 4 · RECURSOS */}
-      <section className="sk-section">
+      <section className="sk-section sk-section--alt">
         <div className="wrap">
           <Reveal>
             <p className="sk-eyebrow">Recursos</p>
@@ -185,9 +182,7 @@ export default function SeklynPage() {
 
       {/* 7 · CTA duplo: personal → Seklyn · negócio → João */}
       <section className="sk-section relative overflow-hidden">
-        <div className="sk-blobs opacity-70" aria-hidden="true">
-          <span />
-        </div>
+        <div className="sk-hero-bg" aria-hidden="true" />
         <div className="wrap relative">
           <ScrollRevealText
             as="h2"

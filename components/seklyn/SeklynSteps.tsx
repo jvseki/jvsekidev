@@ -24,7 +24,7 @@ function StepBlock({ step, index, active, onActive }: { step: SeklynStep; index:
 
         <div className={`transition-opacity duration-500 lg:max-w-[30rem] ${active ? "lg:opacity-100" : "lg:opacity-35"}`}>
           <p className="flex items-center gap-3">
-            <span className="sk-icon">{step.n}</span>
+            <span className="sk-icon sk-icon--solid">{index + 1}</span>
             <span className="sk-eyebrow">Passo {index + 1} de 4</span>
           </p>
           <h3 className="sk-title mt-5 text-[clamp(1.8rem,4vw,2.8rem)]">{step.title}</h3>
@@ -55,7 +55,7 @@ export function SeklynSteps({ steps }: { steps: SeklynStep[] }) {
         <span className="absolute bottom-[10vh] left-0 top-[10vh] hidden w-px bg-[color:var(--sk-line)] lg:block" aria-hidden="true" />
         <motion.span
           className="absolute bottom-[10vh] left-0 top-[10vh] hidden w-px origin-top lg:block"
-          style={{ scaleY: fill, background: "linear-gradient(var(--sk-v300), var(--sk-v600))" }}
+          style={{ scaleY: fill, width: 2, background: "linear-gradient(var(--sk-v400), var(--sk-v700))" }}
           aria-hidden="true"
         />
         {steps.map((s, i) => (
@@ -82,7 +82,7 @@ export function SeklynSteps({ steps }: { steps: SeklynStep[] }) {
                 <span
                   key={s.n}
                   className="h-1.5 rounded-full transition-all duration-500"
-                  style={{ width: active === i ? 28 : 8, background: active === i ? "var(--sk-v300)" : "rgba(196,181,253,0.3)" }}
+                  style={{ width: active === i ? 28 : 8, background: active === i ? "var(--sk-v600)" : "var(--sk-v100)" }}
                 />
               ))}
             </div>

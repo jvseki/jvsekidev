@@ -8,7 +8,7 @@ export const seklyn = {
   path: "/seklyn",
   url: "https://seklyn.com.br",
   signupUrl: "https://seklyn.com.br/personal/cadastro.html",
-  logo: "/seklyn/logo-mark.svg",
+  logo: "/seklyn/logo-s.png",
   tagline: "Treino acompanhado de verdade, sem fricção pro seu aluno.",
   pitch:
     "Saiba exatamente quais séries seus alunos treinaram e quais eles pularam. O personal monta a ficha, o aluno marca série por série por um link sem senha, e o painel mostra quem está levando a sério.",

@@ -1,5 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
+import { SeklynBrand } from "./SeklynBrand";
 import { AutoVideo } from "@/components/fx/AutoVideo";
 import { ScrollTiltFrame } from "@/components/fx/ScrollTiltFrame";
 import { Reveal } from "@/components/Reveal";
@@ -15,14 +15,11 @@ import "@/styles/seklyn.css";
 export function FeaturedSeklyn() {
   return (
     <section className={`sk overflow-hidden ${interFont.variable}`} aria-labelledby="featured-seklyn">
-      <div className="sk-blobs" aria-hidden="true">
-        <span />
-      </div>
-      <div className="sk-dots" aria-hidden="true" />
+      <div className="sk-hero-bg" aria-hidden="true" />
       <div className="wrap relative grid gap-12 py-16 md:py-24 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-center lg:gap-14">
         <Reveal>
           <div className="flex flex-wrap items-center gap-3">
-            <Image src={seklyn.logo} alt="" width={40} height={40} />
+            <SeklynBrand size={40} />
             <span className="sk-badge">
               <span className="sk-badge__dot" aria-hidden="true" />
               Meu SaaS · no ar
@@ -31,7 +28,7 @@ export function FeaturedSeklyn() {
           <h2 id="featured-seklyn" className="sk-title mt-6 text-[clamp(2rem,5vw,3.4rem)]">
             Seklyn: treino acompanhado <span className="sk-grad">de verdade.</span>
           </h2>
-          <p className="sk-mute mt-5 max-w-[46ch] text-[1.05rem] leading-relaxed">
+          <p className="sk-body mt-5 max-w-[46ch] text-[1.05rem] font-medium leading-relaxed">
             Plataforma pra personal trainers: o personal monta a ficha, o aluno marca série por série por um link sem
             senha, e o painel mostra quais exercícios estão sendo pulados. Ideia, banco, API, telas e servidor — tudo
             meu.

@@ -1,6 +1,6 @@
 import React from "react";
-import { AbsoluteFill, Easing, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
-import { INTER, SK } from "./theme";
+import { AbsoluteFill, Easing, Img, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
+import { GRAD_BTN, GRAD_TEXT, INTER, SHADOW_BIG, SHADOW_CARD, SK } from "./theme";
 
 export const clamp = { extrapolateLeft: "clamp", extrapolateRight: "clamp" } as const;
 export const easeOut = Easing.bezier(0.22, 1, 0.36, 1);
@@ -10,80 +10,105 @@ export function prog(frame: number, a: number, b: number) {
   return interpolate(frame, [a, b], [0, 1], { ...clamp, easing: easeOut });
 }
 
-/* ------------------------------------------------------------------ */
-/* Fundo: blobs violeta respirando (mesmo GradientBackdrop do produto) */
-/* ------------------------------------------------------------------ */
+/* ------------------------------------------------------------------------ */
+/* Fundo = .hero-fundo do seklyn.com.br: lavanda clara, brilho violeta e    */
+/* piso quadriculado em perspectiva "andando" pro horizonte.                */
+/* ------------------------------------------------------------------------ */
 
-export function Backdrop({ intensity = 1 }: { intensity?: number }) {
+export function Backdrop({ floor = 1, glowX = 0.72 }: { floor?: number; glowX?: number }) {
   const frame = useCurrentFrame();
   const { width, height } = useVideoConfig();
+  const vertical = height > width;
   const t = frame / 30;
-  const big = Math.max(width, height);
-  const blobs = [
-    { c: SK.v500, x: 0.12 + Math.sin(t * 0.35) * 0.06, y: 0.1 + Math.cos(t * 0.3) * 0.05, s: 0.62 },
-    { c: SK.v900, x: 0.92 + Math.cos(t * 0.28) * 0.05, y: 0.22 + Math.sin(t * 0.33) * 0.06, s: 0.75 },
-    { c: SK.v400, x: 0.38 + Math.sin(t * 0.25 + 1) * 0.07, y: 1.02 + Math.cos(t * 0.31) * 0.04, s: 0.6 },
-  ];
+  const gx = glowX * 100 + Math.sin(t * 0.4) * 3;
+  const gy = (vertical ? 58 : 44) + Math.cos(t * 0.35) * 3;
   return (
-    <AbsoluteFill style={{ background: SK.bg, overflow: "hidden" }}>
-      {blobs.map((b, i) => (
+    <AbsoluteFill
+      style={{
+        overflow: "hidden",
+        background: `radial-gradient(${width * 0.55}px ${height * 0.62}px at ${gx}% ${gy}%, rgba(124,58,237,0.17), transparent 62%),
+          radial-gradient(${width * 0.45}px ${height * 0.4}px at 8% 0%, rgba(124,58,237,0.08), transparent 70%),
+          linear-gradient(180deg, ${SK.bgTop} 0%, ${SK.bg} 100%)`,
+      }}
+    >
+      {floor > 0 ? (
         <div
-          key={i}
           style={{
+            opacity: floor,
             position: "absolute",
-            left: b.x * width - (b.s * big) / 2,
-            top: b.y * height - (b.s * big) / 2,
-            width: b.s * big,
-            height: b.s * big,
-            borderRadius: "50%",
-            background: `radial-gradient(circle, ${b.c} 0%, transparent 65%)`,
-            opacity: 0.42 * intensity,
-            filter: "blur(40px)",
+            left: "-25%",
+            right: "-25%",
+            bottom: -2,
+            height: vertical ? "40%" : "56%",
+            backgroundImage:
+              "linear-gradient(rgba(124,58,237,0.32) 2px, transparent 2px), linear-gradient(90deg, rgba(124,58,237,0.32) 2px, transparent 2px)",
+            backgroundSize: "96px 96px",
+            backgroundPosition: `0 ${((frame % 180) / 180) * 96}px, 0 0`,
+            transform: "perspective(780px) rotateX(64deg)",
+            transformOrigin: "50% 100%",
+            maskImage: "linear-gradient(180deg, transparent 0%, #000 45%, transparent 100%)",
+            WebkitMaskImage: "linear-gradient(180deg, transparent 0%, #000 45%, transparent 100%)",
           }}
         />
-      ))}
-      {/* grade sutil de pontos — dá textura sem competir com o conteúdo */}
-      <AbsoluteFill
-        style={{
-          backgroundImage: "radial-gradient(rgba(196,181,253,0.10) 1px, transparent 1px)",
-          backgroundSize: "34px 34px",
-          maskImage: "radial-gradient(ellipse at center, black 30%, transparent 80%)",
-        }}
-      />
+      ) : null}
     </AbsoluteFill>
   );
 }
 
-/* ---------------------------------------------- */
-/* Logo S — desenhado com o traço (pathLength = 1) */
-/* ---------------------------------------------- */
+/* ------------------------------------------------------------- */
+/* Logo oficial: S cromado (public/seklyn/logo-s.png, 512x498).   */
+/* `shine` (0→1) passa um reflexo recortado pelo próprio S.       */
+/* ------------------------------------------------------------- */
 
-export function SeklynMark({ size = 128, draw = 1, dot = 1 }: { size?: number; draw?: number; dot?: number }) {
+const LOGO = staticFile("seklyn/logo-s.png");
+const HALTER = staticFile("seklyn/hero-halter.png");
+
+export function SeklynMark({ size = 128, shine = -1, glow = 0 }: { size?: number; shine?: number; glow?: number }) {
+  const h = size * (498 / 512);
   return (
-    <svg width={size} height={size} viewBox="0 0 128 128" fill="none">
-      <defs>
-        <linearGradient id="skbg" x1="0" y1="0" x2="128" y2="128" gradientUnits="userSpaceOnUse">
-          <stop offset="0" stopColor="#4c1d95" />
-          <stop offset="1" stopColor="#2e1065" />
-        </linearGradient>
-        <linearGradient id="skac" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#c4b5fd" />
-          <stop offset="1" stopColor="#8b5cf6" />
-        </linearGradient>
-      </defs>
-      <rect width="128" height="128" rx="30" fill="url(#skbg)" />
-      <circle cx="93" cy="35" r={7 * dot} fill="url(#skac)" />
-      <path
-        d="M79 46c0-8-8-13-19-13-12 0-20 6-20 15 0 20 32 12 32 26 0 6-6 10-14 10-9 0-16-4-18-11"
-        stroke="white"
-        strokeWidth="9"
-        strokeLinecap="round"
-        fill="none"
-        pathLength={1}
-        strokeDasharray={1}
-        strokeDashoffset={1 - draw}
-      />
-    </svg>
+    <div
+      style={{
+        position: "relative",
+        width: size,
+        height: h,
+        flexShrink: 0,
+        filter: glow ? `drop-shadow(0 ${size * 0.08}px ${size * 0.22}px rgba(124,58,237,${glow}))` : undefined,
+      }}
+    >
+      <Img src={LOGO} style={{ width: size, height: h, display: "block" }} />
+      {shine >= 0 && shine <= 1 ? (
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            WebkitMaskImage: `url(${LOGO})`,
+            WebkitMaskSize: "100% 100%",
+            maskImage: `url(${LOGO})`,
+            maskSize: "100% 100%",
+            background: `linear-gradient(110deg, transparent ${shine * 160 - 40}%, rgba(255,255,255,0.9) ${shine * 160 - 25}%, transparent ${shine * 160 - 10}%)`,
+          }}
+        />
+      ) : null}
+    </div>
+  );
+}
+
+/** Marca escrita como no site: "Sek" escuro + "lyn" em violeta. */
+export function Wordmark({ size = 40 }: { size?: number }) {
+  return (
+    <span style={{ fontFamily: INTER, fontWeight: 800, fontSize: size, letterSpacing: "-0.04em", color: SK.text }}>
+      Sek<span style={{ color: SK.v600 }}>lyn</span>
+    </span>
+  );
+}
+
+/** Logo + nome, lado a lado (como na nav do site). */
+export function Brand({ size = 40 }: { size?: number }) {
+  return (
+    <div style={{ display: "inline-flex", alignItems: "center", gap: size * 0.3 }}>
+      <SeklynMark size={size * 1.05} />
+      <Wordmark size={size * 0.72} />
+    </div>
   );
 }
 
@@ -97,36 +122,33 @@ export function Words({
   stagger = 3,
   style,
   highlight = [],
+  highlightIdx = [],
 }: {
   text: string;
   start?: number;
   stagger?: number;
   style?: React.CSSProperties;
   highlight?: string[];
+  /** Destaca por posição (quando a palavra se repete na frase). */
+  highlightIdx?: number[];
 }) {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const words = text.split(" ");
+  const clean = (s: string) => s.replace(/[.,!?—]/g, "");
   return (
-    <div style={{ fontFamily: INTER, display: "flex", flexWrap: "wrap", columnGap: "0.26em", ...style }}>
+    <div style={{ fontFamily: INTER, display: "flex", flexWrap: "wrap", columnGap: "0.26em", color: SK.text, ...style }}>
       {words.map((w, i) => {
         const s = spring({ frame: frame - start - i * stagger, fps, config: { damping: 18, stiffness: 140, mass: 0.7 } });
-        const clean = (s: string) => s.replace(/[.,!?]/g, "");
-        const hl = highlight.some((h) => clean(h) === clean(w));
+        const hl = highlightIdx.includes(i) || highlight.some((h) => clean(h) === clean(w));
         return (
-          <span key={i} style={{ display: "inline-block", overflow: "hidden", paddingBottom: "0.08em" }}>
+          <span key={i} style={{ display: "inline-block", overflow: "hidden", paddingBottom: "0.1em" }}>
             <span
               style={{
                 display: "inline-block",
                 transform: `translateY(${(1 - s) * 105}%)`,
                 opacity: interpolate(s, [0, 0.4], [0, 1], clamp),
-                ...(hl
-                  ? {
-                      backgroundImage: `linear-gradient(100deg, ${SK.v300}, ${SK.v500})`,
-                      WebkitBackgroundClip: "text",
-                      color: "transparent",
-                    }
-                  : null),
+                ...(hl ? { backgroundImage: GRAD_TEXT, WebkitBackgroundClip: "text", color: "transparent" } : null),
               }}
             >
               {w}
@@ -138,6 +160,7 @@ export function Words({
   );
 }
 
+/** Selo "• Feito para Personal Trainers" do site. */
 export function Pill({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) {
   return (
     <span
@@ -145,14 +168,38 @@ export function Pill({ children, style }: { children: React.ReactNode; style?: R
         fontFamily: INTER,
         display: "inline-flex",
         alignItems: "center",
-        gap: 10,
+        gap: 12,
         borderRadius: 999,
         padding: "10px 22px",
-        background: "rgba(124, 58, 237, 0.16)",
-        border: `1px solid ${SK.lineStrong}`,
-        color: SK.v300,
+        background: SK.v50,
+        border: `1px solid ${SK.v100}`,
+        color: SK.v700,
         fontWeight: 600,
         fontSize: 24,
+        ...style,
+      }}
+    >
+      <span style={{ width: 9, height: 9, borderRadius: 99, background: SK.v600 }} />
+      {children}
+    </span>
+  );
+}
+
+export function Button({ children, size = 1, style }: { children: React.ReactNode; size?: number; style?: React.CSSProperties }) {
+  return (
+    <span
+      style={{
+        fontFamily: INTER,
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: `${16 * size}px ${30 * size}px`,
+        borderRadius: 14 * size,
+        background: GRAD_BTN,
+        color: "white",
+        fontWeight: 700,
+        fontSize: 22 * size,
+        boxShadow: "0 12px 30px rgba(124,58,237,0.38), inset 0 1px 0 rgba(255,255,255,0.25)",
         ...style,
       }}
     >
@@ -173,30 +220,107 @@ function Check({ size = 22, color = "white" }: { size?: number; color?: string }
   );
 }
 
+/** Chip flutuante do hero ("Série 3 · Supino reto — concluída agora"). */
+export function Chip({ kind, p }: { kind: "serie" | "adesao"; p: number }) {
+  const s = interpolate(p, [0, 1], [0.6, 1], clamp);
+  return (
+    <div
+      style={{
+        fontFamily: INTER,
+        display: "flex",
+        alignItems: "center",
+        gap: 14,
+        padding: "14px 20px",
+        borderRadius: 16,
+        background: "rgba(255,255,255,0.92)",
+        border: `1px solid ${SK.line}`,
+        boxShadow: SHADOW_CARD,
+        opacity: p,
+        transform: `scale(${s})`,
+      }}
+    >
+      {kind === "serie" ? (
+        <>
+          <span style={{ width: 38, height: 38, borderRadius: 99, background: SK.green, display: "grid", placeItems: "center" }}>
+            <Check size={22} />
+          </span>
+          <span>
+            <div style={{ fontWeight: 700, fontSize: 21, color: SK.text }}>Série 3 · Supino reto</div>
+            <div style={{ fontSize: 17, color: SK.mute }}>concluída agora</div>
+          </span>
+        </>
+      ) : (
+        <span>
+          <div style={{ fontWeight: 800, fontSize: 34, letterSpacing: "-0.03em", backgroundImage: GRAD_TEXT, WebkitBackgroundClip: "text", color: "transparent" }}>
+            {Math.round(92 * interpolate(p, [0, 1], [0.4, 1], clamp))}%
+          </div>
+          <div style={{ fontSize: 17, color: SK.mute }}>aderência na semana</div>
+        </span>
+      )}
+    </div>
+  );
+}
+
+/** O halter do hero, flutuando, com os dois chips orbitando. */
+export function HeroHalter({ size = 620, enter = 1, chips = 1 }: { size?: number; enter?: number; chips?: number }) {
+  const frame = useCurrentFrame();
+  const t = frame / 30;
+  const bob = Math.sin(t * 1.6) * 14;
+  const tilt = Math.sin(t * 0.9) * 4;
+  return (
+    <div style={{ position: "relative", width: size, height: size, flexShrink: 0 }}>
+      {/* sombra/brilho no chão */}
+      <div
+        style={{
+          position: "absolute",
+          left: "22%",
+          right: "22%",
+          bottom: "8%",
+          height: "12%",
+          borderRadius: "50%",
+          background: "radial-gradient(closest-side, rgba(124,58,237,0.45), transparent)",
+          filter: "blur(18px)",
+          opacity: 0.7 * enter,
+          transform: `scaleX(${1 - bob / 140})`,
+        }}
+      />
+      <Img
+        src={HALTER}
+        style={{
+          position: "absolute",
+          inset: 0,
+          width: "100%",
+          height: "100%",
+          objectFit: "contain",
+          // mesma máscara do .hero-palco no site: some o fundo quadrado do PNG
+          maskImage: "radial-gradient(closest-side, #000 62%, transparent 100%)",
+          WebkitMaskImage: "radial-gradient(closest-side, #000 62%, transparent 100%)",
+          opacity: enter,
+          transform: `translateY(${bob + (1 - enter) * 120}px) rotate(${tilt + (1 - enter) * -25}deg) scale(${0.7 + enter * 0.3})`,
+        }}
+      />
+      <div style={{ position: "absolute", left: "-4%", top: "10%", transform: `translateY(${Math.sin(t * 1.2 + 1) * 10}px)` }}>
+        <Chip kind="serie" p={interpolate(chips, [0, 0.5], [0, 1], clamp)} />
+      </div>
+      <div style={{ position: "absolute", right: "-2%", bottom: "16%", transform: `translateY(${Math.sin(t * 1.3 + 2.5) * 10}px)` }}>
+        <Chip kind="adesao" p={interpolate(chips, [0.4, 1], [0, 1], clamp)} />
+      </div>
+    </div>
+  );
+}
+
 /* ---------------------------------------------------------- */
 /* Celular do aluno: treino do dia, séries marcadas uma a uma  */
 /* ---------------------------------------------------------- */
 
 const ALUNO_TREINO = [
-  {
-    nome: "Supino reto",
-    series: ["12 reps · 40kg", "10 reps · 45kg", "8 reps · 50kg"],
-  },
-  {
-    nome: "Crucifixo inclinado",
-    series: ["12 reps · 14kg", "12 reps · 14kg", "10 reps · 16kg"],
-  },
-  {
-    nome: "Tríceps corda",
-    series: ["15 reps · 25kg", "12 reps · 30kg"],
-  },
+  { nome: "Supino reto", series: ["12 reps · 40kg", "10 reps · 45kg", "8 reps · 50kg"] },
+  { nome: "Crucifixo inclinado", series: ["12 reps · 14kg", "12 reps · 14kg", "10 reps · 16kg"] },
+  { nome: "Tríceps corda", series: ["15 reps · 25kg", "12 reps · 30kg"] },
 ];
 export const ALUNO_TOTAL_SERIES = ALUNO_TREINO.reduce((n, e) => n + e.series.length, 0);
 
-/**
- * `done` é contínuo: 2.5 = duas séries feitas e a terceira no meio da
- * animação de check. `tap` (0→1) desenha o "dedo" tocando na próxima.
- */
+/** `done` é contínuo: 2.5 = duas séries feitas e a terceira no meio da animação. */
 export function PhoneAluno({ done, scale = 1 }: { done: number; scale?: number }) {
   const W = 400;
   const H = 820;
@@ -212,7 +336,7 @@ export function PhoneAluno({ done, scale = 1 }: { done: number; scale?: number }
         borderRadius: 56,
         padding: 12,
         background: "linear-gradient(160deg, #2a2340, #0c0915)",
-        boxShadow: `0 50px 120px rgba(76, 29, 149, 0.55), 0 0 0 2px rgba(196,181,253,0.18), inset 0 0 0 1px rgba(255,255,255,0.06)`,
+        boxShadow: `0 50px 110px rgba(76, 29, 149, 0.35), 0 0 0 2px rgba(124,58,237,0.25)`,
         fontFamily: INTER,
         flexShrink: 0,
       }}
@@ -224,54 +348,39 @@ export function PhoneAluno({ done, scale = 1 }: { done: number; scale?: number }
           height: "100%",
           borderRadius: 44,
           overflow: "hidden",
-          background: "#0b0a12",
+          background: SK.bg,
           color: SK.text,
-          padding: "58px 22px 20px",
+          padding: "56px 20px 18px",
           display: "flex",
           flexDirection: "column",
         }}
       >
-        {/* notch */}
-        <div
-          style={{
-            position: "absolute",
-            top: 14,
-            left: "50%",
-            width: 110,
-            height: 30,
-            marginLeft: -55,
-            borderRadius: 20,
-            background: "#000",
-          }}
-        />
-        <div style={{ fontSize: 15, color: SK.mute, fontWeight: 500 }}>Treino A · hoje</div>
-        <div style={{ fontSize: 26, fontWeight: 700, marginTop: 4, letterSpacing: "-0.02em" }}>Peito e tríceps</div>
+        <div style={{ position: "absolute", top: 14, left: "50%", width: 110, height: 30, marginLeft: -55, borderRadius: 20, background: "#000" }} />
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <Brand size={26} />
+          <span style={{ fontSize: 13, color: SK.mute, fontWeight: 500 }}>Olá, Ana</span>
+        </div>
+        <div style={{ marginTop: 16, fontSize: 14, color: SK.mute, fontWeight: 500 }}>Treino A · hoje</div>
+        <div style={{ fontSize: 25, fontWeight: 800, marginTop: 2, letterSpacing: "-0.03em" }}>Peito e tríceps</div>
 
-        <div style={{ marginTop: 16, display: "flex", justifyContent: "space-between", fontSize: 14, color: SK.mute }}>
+        <div style={{ marginTop: 12, display: "flex", justifyContent: "space-between", fontSize: 13, color: SK.mute }}>
           <span>
             {Math.min(ALUNO_TOTAL_SERIES, Math.floor(done))} de {ALUNO_TOTAL_SERIES} séries
           </span>
-          <span style={{ color: pct >= 1 ? SK.green : SK.v300, fontWeight: 600 }}>{Math.round(pct * 100)}%</span>
+          <span style={{ color: pct >= 1 ? SK.green : SK.v600, fontWeight: 700 }}>{Math.round(pct * 100)}%</span>
         </div>
-        <div style={{ marginTop: 8, height: 8, borderRadius: 99, background: "rgba(255,255,255,0.07)", overflow: "hidden" }}>
-          <div
-            style={{
-              height: "100%",
-              width: `${pct * 100}%`,
-              borderRadius: 99,
-              background: pct >= 1 ? SK.green : `linear-gradient(90deg, ${SK.v600}, ${SK.v400})`,
-            }}
-          />
+        <div style={{ marginTop: 7, height: 8, borderRadius: 99, background: SK.v100, overflow: "hidden" }}>
+          <div style={{ height: "100%", width: `${pct * 100}%`, borderRadius: 99, background: pct >= 1 ? SK.green : GRAD_BTN }} />
         </div>
 
-        <div style={{ marginTop: 18, display: "flex", flexDirection: "column", gap: 14 }}>
+        <div style={{ marginTop: 14, display: "flex", flexDirection: "column", gap: 12 }}>
           {ALUNO_TREINO.map((ex) => (
             <div key={ex.nome}>
-              <div style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>{ex.nome}</div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
+              <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 7 }}>{ex.nome}</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                 {ex.series.map((s, si) => {
                   const my = idx++;
-                  const p = Math.min(1, Math.max(0, done - my)); // 0..1 para esta série
+                  const p = Math.min(1, Math.max(0, done - my));
                   const on = p > 0.5;
                   return (
                     <div
@@ -280,14 +389,15 @@ export function PhoneAluno({ done, scale = 1 }: { done: number; scale?: number }
                         display: "flex",
                         alignItems: "center",
                         gap: 12,
-                        padding: "11px 14px",
-                        borderRadius: 14,
-                        fontSize: 15,
-                        fontWeight: 500,
-                        background: on ? SK.greenDeep : "rgba(255,255,255,0.05)",
-                        border: `1px solid ${on ? "rgba(16,185,129,0.6)" : "rgba(255,255,255,0.06)"}`,
+                        padding: "10px 13px",
+                        borderRadius: 12,
+                        fontSize: 14.5,
+                        fontWeight: 600,
+                        background: on ? SK.green : SK.card,
+                        border: `1px solid ${on ? SK.green : SK.line}`,
+                        boxShadow: on ? "0 6px 16px rgba(22,163,74,0.25)" : "0 1px 2px rgba(15,23,42,0.05)",
                         transform: `scale(${1 + Math.sin(p * Math.PI) * 0.035})`,
-                        color: on ? "white" : "#cfcbe0",
+                        color: on ? "white" : SK.text,
                       }}
                     >
                       <span
@@ -297,8 +407,8 @@ export function PhoneAluno({ done, scale = 1 }: { done: number; scale?: number }
                           borderRadius: 99,
                           display: "grid",
                           placeItems: "center",
-                          border: on ? "none" : "2px solid rgba(255,255,255,0.22)",
-                          background: on ? "rgba(255,255,255,0.22)" : "transparent",
+                          border: on ? "none" : `2px solid ${SK.lineStrong}`,
+                          background: on ? "rgba(255,255,255,0.25)" : "transparent",
                           flexShrink: 0,
                         }}
                       >
@@ -309,7 +419,7 @@ export function PhoneAluno({ done, scale = 1 }: { done: number; scale?: number }
                         ) : null}
                       </span>
                       <span>Série {si + 1}</span>
-                      <span style={{ marginLeft: "auto", fontSize: 13, opacity: 0.8 }}>{s}</span>
+                      <span style={{ marginLeft: "auto", fontSize: 12.5, fontWeight: 500, opacity: on ? 0.9 : 0.7 }}>{s}</span>
                     </div>
                   );
                 })}
@@ -318,7 +428,6 @@ export function PhoneAluno({ done, scale = 1 }: { done: number; scale?: number }
           ))}
         </div>
 
-        {/* tabs inferiores: treino | dicas do personal */}
         <div
           style={{
             marginTop: "auto",
@@ -326,15 +435,16 @@ export function PhoneAluno({ done, scale = 1 }: { done: number; scale?: number }
             gridTemplateColumns: "1fr 1fr",
             gap: 6,
             padding: 5,
-            borderRadius: 16,
-            background: "rgba(255,255,255,0.05)",
-            fontSize: 14,
-            fontWeight: 600,
+            borderRadius: 14,
+            background: SK.card,
+            border: `1px solid ${SK.line}`,
+            fontSize: 13.5,
+            fontWeight: 700,
             textAlign: "center",
           }}
         >
-          <span style={{ padding: "10px 0", borderRadius: 12, background: SK.v600 }}>Treino</span>
-          <span style={{ padding: "10px 0", color: SK.mute }}>Dicas do personal</span>
+          <span style={{ padding: "9px 0", borderRadius: 10, background: GRAD_BTN, color: "white" }}>Treino</span>
+          <span style={{ padding: "9px 0", color: SK.mute }}>Dicas do Personal</span>
         </div>
       </div>
     </div>
@@ -355,7 +465,7 @@ const FICHA = [
 export function DashboardFicha({ rows, scale = 1 }: { rows: number; scale?: number }) {
   const W = 1040;
   const H = 640;
-  const nav = ["Resumo", "Treinos", "Alunos", "Dicas", "Agenda"];
+  const nav = ["Resumo", "Treinos", "Alunos", "Dicas"];
   return (
     <div
       style={{
@@ -363,23 +473,20 @@ export function DashboardFicha({ rows, scale = 1 }: { rows: number; scale?: numb
         height: H,
         transform: `scale(${scale})`,
         transformOrigin: "center",
-        borderRadius: 26,
+        borderRadius: 24,
         overflow: "hidden",
         display: "grid",
         gridTemplateColumns: "220px 1fr",
-        background: SK.bgCardSolid,
-        border: `1px solid ${SK.lineStrong}`,
-        boxShadow: "0 50px 120px rgba(46, 16, 101, 0.6)",
+        background: SK.card,
+        border: `1px solid ${SK.line}`,
+        boxShadow: SHADOW_BIG,
         fontFamily: INTER,
         color: SK.text,
         flexShrink: 0,
       }}
     >
-      <aside style={{ padding: 22, borderRight: `1px solid ${SK.line}`, background: "rgba(0,0,0,0.25)" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <SeklynMark size={34} />
-          <span style={{ fontWeight: 700, fontSize: 20, letterSpacing: "-0.02em" }}>Seklyn</span>
-        </div>
+      <aside style={{ padding: 22, borderRight: `1px solid ${SK.line}`, background: SK.bg }}>
+        <Brand size={32} />
         <div style={{ marginTop: 30, display: "flex", flexDirection: "column", gap: 6 }}>
           {nav.map((n) => (
             <div
@@ -388,8 +495,8 @@ export function DashboardFicha({ rows, scale = 1 }: { rows: number; scale?: numb
                 padding: "11px 14px",
                 borderRadius: 12,
                 fontSize: 16,
-                fontWeight: 500,
-                background: n === "Treinos" ? SK.v600 : "transparent",
+                fontWeight: 600,
+                background: n === "Treinos" ? GRAD_BTN : "transparent",
                 color: n === "Treinos" ? "white" : SK.mute,
               }}
             >
@@ -401,17 +508,8 @@ export function DashboardFicha({ rows, scale = 1 }: { rows: number; scale?: numb
       <main style={{ padding: 30 }}>
         <div style={{ fontSize: 14, color: SK.mute }}>Ficha de treino</div>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 4 }}>
-          <div style={{ fontSize: 28, fontWeight: 700, letterSpacing: "-0.02em" }}>Ana Souza · Treino A</div>
-          <span
-            style={{
-              fontSize: 14,
-              fontWeight: 600,
-              padding: "8px 14px",
-              borderRadius: 10,
-              background: "rgba(124,58,237,0.18)",
-              color: SK.v300,
-            }}
-          >
+          <div style={{ fontSize: 28, fontWeight: 800, letterSpacing: "-0.03em" }}>Ana Souza · Treino A</div>
+          <span style={{ fontSize: 14, fontWeight: 700, padding: "8px 14px", borderRadius: 10, background: SK.v50, color: SK.v700, border: `1px solid ${SK.v100}` }}>
             + Exercício
           </span>
         </div>
@@ -420,12 +518,12 @@ export function DashboardFicha({ rows, scale = 1 }: { rows: number; scale?: numb
             marginTop: 24,
             display: "grid",
             gridTemplateColumns: "1.5fr 1fr 1fr 1fr",
-            fontSize: 13,
+            fontSize: 12.5,
             color: SK.faint,
             padding: "0 16px 10px",
             textTransform: "uppercase",
             letterSpacing: "0.06em",
-            fontWeight: 600,
+            fontWeight: 700,
           }}
         >
           <span>Exercício</span>
@@ -436,6 +534,7 @@ export function DashboardFicha({ rows, scale = 1 }: { rows: number; scale?: numb
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           {FICHA.map((f, i) => {
             const p = Math.min(1, Math.max(0, rows - i));
+            const fresh = p > 0 && p < 1;
             return (
               <div
                 key={f.ex}
@@ -446,13 +545,13 @@ export function DashboardFicha({ rows, scale = 1 }: { rows: number; scale?: numb
                   padding: "16px",
                   borderRadius: 14,
                   fontSize: 17,
-                  background: "rgba(255,255,255,0.04)",
-                  border: `1px solid ${p > 0.98 && i === Math.floor(rows) - 1 ? SK.lineStrong : SK.line}`,
+                  background: fresh ? SK.v50 : SK.card,
+                  border: `1px solid ${fresh ? SK.v300 : SK.line}`,
                   opacity: p,
                   transform: `translateY(${(1 - easeOut(p)) * 24}px)`,
                 }}
               >
-                <span style={{ fontWeight: 600 }}>{f.ex}</span>
+                <span style={{ fontWeight: 700 }}>{f.ex}</span>
                 <span style={{ color: SK.mute }}>{f.s}</span>
                 <span style={{ color: SK.mute }}>{f.r}</span>
                 <span style={{ color: SK.mute }}>{f.c}</span>
@@ -465,23 +564,12 @@ export function DashboardFicha({ rows, scale = 1 }: { rows: number; scale?: numb
             marginTop: 22,
             display: "flex",
             alignItems: "center",
-            gap: 12,
+            gap: 14,
             opacity: interpolate(rows, [FICHA.length - 0.2, FICHA.length + 0.4], [0, 1], clamp),
           }}
         >
-          <span
-            style={{
-              padding: "12px 20px",
-              borderRadius: 12,
-              background: SK.v600,
-              fontWeight: 600,
-              fontSize: 16,
-              boxShadow: "0 10px 30px rgba(124,58,237,0.45)",
-            }}
-          >
-            Salvar e enviar link
-          </span>
-          <span style={{ color: SK.mute, fontSize: 15 }}>Pronto em menos de 2 minutos.</span>
+          <Button size={0.75}>Salvar e enviar link</Button>
+          <span style={{ color: SK.mute, fontSize: 15 }}>Pronto em poucos minutos.</span>
         </div>
       </main>
     </div>
@@ -500,19 +588,18 @@ const ADESAO = [
 ];
 
 export function AdesaoCard({ p, scale = 1 }: { p: number; scale?: number }) {
-  const W = 700;
   const total = Math.round(interpolate(p, [0, 1], [0, 92], clamp));
   return (
     <div
       style={{
-        width: W,
+        width: 700,
         transform: `scale(${scale})`,
         transformOrigin: "center",
         padding: 34,
-        borderRadius: 28,
-        background: SK.bgCard,
-        border: `1px solid ${SK.lineStrong}`,
-        boxShadow: "0 50px 120px rgba(46, 16, 101, 0.6)",
+        borderRadius: 24,
+        background: SK.card,
+        border: `1px solid ${SK.line}`,
+        boxShadow: SHADOW_BIG,
         fontFamily: INTER,
         color: SK.text,
         flexShrink: 0,
@@ -521,7 +608,7 @@ export function AdesaoCard({ p, scale = 1 }: { p: number; scale?: number }) {
       <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between" }}>
         <div>
           <div style={{ fontSize: 16, color: SK.mute }}>Adesão · Ana Souza</div>
-          <div style={{ fontSize: 26, fontWeight: 700, marginTop: 4 }}>Últimos 7 dias</div>
+          <div style={{ fontSize: 26, fontWeight: 800, marginTop: 4, letterSpacing: "-0.03em" }}>Últimos 7 dias</div>
         </div>
         <div style={{ textAlign: "right" }}>
           <div
@@ -530,7 +617,7 @@ export function AdesaoCard({ p, scale = 1 }: { p: number; scale?: number }) {
               fontWeight: 800,
               lineHeight: 1,
               letterSpacing: "-0.04em",
-              backgroundImage: `linear-gradient(100deg, ${SK.v300}, ${SK.v500})`,
+              backgroundImage: GRAD_TEXT,
               WebkitBackgroundClip: "text",
               color: "transparent",
               fontVariantNumeric: "tabular-nums",
@@ -547,26 +634,13 @@ export function AdesaoCard({ p, scale = 1 }: { p: number; scale?: number }) {
           return (
             <div key={a.ex}>
               <div style={{ display: "flex", justifyContent: "space-between", fontSize: 18, marginBottom: 9 }}>
-                <span style={{ fontWeight: 500 }}>{a.ex}</span>
-                <span
-                  style={{
-                    color: a.bad ? SK.red : SK.mute,
-                    fontWeight: a.bad ? 700 : 500,
-                    opacity: interpolate(local, [0.6, 1], [0, 1], clamp),
-                  }}
-                >
+                <span style={{ fontWeight: 600 }}>{a.ex}</span>
+                <span style={{ color: a.bad ? SK.red : SK.mute, fontWeight: a.bad ? 700 : 500, opacity: interpolate(local, [0.6, 1], [0, 1], clamp) }}>
                   {a.label}
                 </span>
               </div>
-              <div style={{ height: 12, borderRadius: 99, background: "rgba(255,255,255,0.07)", overflow: "hidden" }}>
-                <div
-                  style={{
-                    height: "100%",
-                    width: `${Math.max(a.v * local, a.bad ? 0.04 * local : 0) * 100}%`,
-                    borderRadius: 99,
-                    background: a.bad ? SK.red : `linear-gradient(90deg, ${SK.v600}, ${SK.v400})`,
-                  }}
-                />
+              <div style={{ height: 12, borderRadius: 99, background: SK.v50, overflow: "hidden", border: `1px solid ${SK.v100}` }}>
+                <div style={{ height: "100%", width: `${a.v * local * 100}%`, borderRadius: 99, background: a.bad ? SK.red : GRAD_BTN }} />
               </div>
             </div>
           );
@@ -577,11 +651,11 @@ export function AdesaoCard({ p, scale = 1 }: { p: number; scale?: number }) {
           marginTop: 28,
           padding: "14px 18px",
           borderRadius: 14,
-          background: "rgba(248,113,113,0.1)",
-          border: "1px solid rgba(248,113,113,0.35)",
-          color: "#fecaca",
+          background: SK.redLight,
+          border: "1px solid #fecaca",
+          color: "#991b1b",
           fontSize: 17,
-          fontWeight: 500,
+          fontWeight: 600,
           opacity: interpolate(p, [0.85, 1], [0, 1], clamp),
           transform: `translateY(${interpolate(p, [0.85, 1], [12, 0], clamp)}px)`,
         }}
@@ -597,21 +671,20 @@ export function AdesaoCard({ p, scale = 1 }: { p: number; scale?: number }) {
 /* --------------------------------------------- */
 
 export function ChatLink({ p, tap, scale = 1 }: { p: number; tap: number; scale?: number }) {
-  const W = 620;
   const bubbleIn = interpolate(p, [0, 0.35], [0, 1], { ...clamp, easing: easeOut });
   const cardIn = interpolate(p, [0.25, 0.6], [0, 1], { ...clamp, easing: easeOut });
   const replyIn = interpolate(p, [0.75, 1], [0, 1], { ...clamp, easing: easeOut });
   return (
     <div
       style={{
-        width: W,
+        width: 620,
         transform: `scale(${scale})`,
         transformOrigin: "center",
         padding: 28,
-        borderRadius: 30,
-        background: SK.bgCard,
+        borderRadius: 26,
+        background: SK.card,
         border: `1px solid ${SK.line}`,
-        boxShadow: "0 50px 120px rgba(46, 16, 101, 0.55)",
+        boxShadow: SHADOW_BIG,
         fontFamily: INTER,
         color: SK.text,
         display: "flex",
@@ -629,14 +702,15 @@ export function ChatLink({ p, tap, scale = 1 }: { p: number; tap: number; scale?
             background: `linear-gradient(135deg, ${SK.v400}, ${SK.v700})`,
             display: "grid",
             placeItems: "center",
-            fontWeight: 700,
+            fontWeight: 800,
             fontSize: 20,
+            color: "white",
           }}
         >
           A
         </div>
         <div>
-          <div style={{ fontWeight: 600, fontSize: 19 }}>Ana Souza</div>
+          <div style={{ fontWeight: 700, fontSize: 19 }}>Ana Souza</div>
           <div style={{ fontSize: 14, color: SK.mute }}>aluna</div>
         </div>
       </div>
@@ -647,8 +721,10 @@ export function ChatLink({ p, tap, scale = 1 }: { p: number; tap: number; scale?
           maxWidth: "86%",
           padding: "14px 18px",
           borderRadius: "20px 20px 6px 20px",
-          background: SK.v700,
+          background: GRAD_BTN,
+          color: "white",
           fontSize: 19,
+          fontWeight: 500,
           opacity: bubbleIn,
           transform: `translateY(${(1 - bubbleIn) * 20}px)`,
         }}
@@ -661,21 +737,23 @@ export function ChatLink({ p, tap, scale = 1 }: { p: number; tap: number; scale?
           width: "86%",
           borderRadius: "20px 20px 6px 20px",
           overflow: "hidden",
-          background: SK.v700,
+          background: SK.v50,
+          border: `1px solid ${SK.v100}`,
           opacity: cardIn,
           transform: `translateY(${(1 - cardIn) * 20}px) scale(${1 - tap * 0.03})`,
           position: "relative",
         }}
       >
-        <div style={{ display: "flex", gap: 14, alignItems: "center", padding: 14, background: "rgba(0,0,0,0.22)" }}>
-          <SeklynMark size={54} />
+        <div style={{ display: "flex", gap: 14, alignItems: "center", padding: 14 }}>
+          <div style={{ width: 64, height: 64, borderRadius: 16, background: "white", border: `1px solid ${SK.v100}`, display: "grid", placeItems: "center" }}>
+            <SeklynMark size={44} />
+          </div>
           <div>
-            <div style={{ fontWeight: 700, fontSize: 18 }}>Treino A · Peito e tríceps</div>
-            <div style={{ fontSize: 15, color: SK.v300, marginTop: 2 }}>seklyn.com.br/t/ana-8f2k</div>
+            <div style={{ fontWeight: 800, fontSize: 18 }}>Treino A · Peito e tríceps</div>
+            <div style={{ fontSize: 15, color: SK.v700, marginTop: 2, fontWeight: 600 }}>seklyn.com.br/t/ana-8f2k</div>
           </div>
         </div>
-        <div style={{ padding: "10px 14px", fontSize: 15, color: "#ddd6fe" }}>Sem senha · sem app · abre no celular</div>
-        {/* toque */}
+        <div style={{ padding: "10px 14px", fontSize: 15, color: SK.mute, borderTop: `1px solid ${SK.v100}` }}>Sem senha · sem app · abre no celular</div>
         <div
           style={{
             position: "absolute",
@@ -686,7 +764,7 @@ export function ChatLink({ p, tap, scale = 1 }: { p: number; tap: number; scale?
             marginLeft: -35,
             marginTop: -35,
             borderRadius: 99,
-            border: "3px solid rgba(255,255,255,0.8)",
+            border: `3px solid ${SK.v600}`,
             opacity: tap > 0 ? 1 - tap : 0,
             transform: `scale(${0.4 + tap * 1.4})`,
           }}
@@ -697,7 +775,8 @@ export function ChatLink({ p, tap, scale = 1 }: { p: number; tap: number; scale?
           alignSelf: "flex-start",
           padding: "12px 18px",
           borderRadius: "20px 20px 20px 6px",
-          background: "rgba(255,255,255,0.08)",
+          background: SK.bg,
+          border: `1px solid ${SK.line}`,
           fontSize: 19,
           opacity: replyIn,
           transform: `translateY(${(1 - replyIn) * 20}px)`,
@@ -705,6 +784,23 @@ export function ChatLink({ p, tap, scale = 1 }: { p: number; tap: number; scale?
       >
         Abri! Já vou marcando aqui 💪
       </div>
+    </div>
+  );
+}
+
+/** Lista com checks verdes, igual ao bloco "Pronto para acompanhar..." do site. */
+export function CheckList({ items, p, size = 1 }: { items: string[]; p: number; size?: number }) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 12 * size, fontFamily: INTER }}>
+      {items.map((it, i) => {
+        const local = interpolate(p, [i * 0.15, i * 0.15 + 0.35], [0, 1], { ...clamp, easing: easeOut });
+        return (
+          <div key={it} style={{ display: "flex", alignItems: "center", gap: 12 * size, fontSize: 24 * size, color: SK.text, opacity: local, transform: `translateX(${(1 - local) * -20}px)` }}>
+            <Check size={26 * size} color={SK.green} />
+            {it}
+          </div>
+        );
+      })}
     </div>
   );
 }

@@ -5,8 +5,8 @@ import { execSync } from "node:child_process";
 
 const OUT = "public/video/seklyn";
 const jobs = [
-  { id: "SeklynPromo", file: "promo", scale: 0.6667, poster: 750 },
-  { id: "SeklynPromoVertical", file: "promo-vertical", scale: 0.6667, poster: 750 },
+  { id: "SeklynPromo", file: "promo", scale: 0.6667, poster: 170 },
+  { id: "SeklynPromoVertical", file: "promo-vertical", scale: 0.6667, poster: 170 },
   { id: "SeklynLoopFicha", file: "loop-ficha", scale: 0.6667, poster: 120 },
   { id: "SeklynLoopLink", file: "loop-link", scale: 0.6667, poster: 120 },
   { id: "SeklynLoopAluno", file: "loop-aluno", scale: 0.6667, poster: 150 },
